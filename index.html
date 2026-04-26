@@ -28,7 +28,9 @@
       background-color: #050b14;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
+      overflow: hidden; /* Wymuszenie braku scrolla */
+      width: 100vw;
+      height: 100vh;
     }
 
     /* Kosmiczne tło z mgławicami */
@@ -48,11 +50,10 @@
         
         html, body {
             width: 100% !important; height: 100% !important; margin: 0 !important; padding: 0 !important;
-            background-color: #0b1120 !important;
+            background-color: #0b1120 !important; overflow: visible !important;
             -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
         }
         
-        /* Zapewnienie poprawnych kolorów do druku */
         #diploma-print-area {
             position: fixed !important; left: 0 !important; top: 0 !important;
             width: 100vw !important; height: 100vh !important;
@@ -143,7 +144,7 @@
         canvas.width = width;
         canvas.height = height;
 
-        const numStars = 800; // Ilość gwiazd
+        const numStars = 800;
         const stars = Array.from({ length: numStars }, () => ({
           x: (Math.random() - 0.5) * 3000,
           y: (Math.random() - 0.5) * 3000,
@@ -162,7 +163,6 @@
             const oldZ = star.z;
             star.z -= speed;
 
-            // Gdy gwiazda przeleci za naszą kamerę - respawn z przodu
             if (star.z <= 0) {
               star.z += 2000;
               star.x = (Math.random() - 0.5) * 3000;
@@ -179,13 +179,11 @@
 
             ctx.beginPath();
             if (speed > 5 || isWarp) {
-              // Tryb szybkiego lotu / hiperprzestrzeni (Rysujemy smugi świetlne)
               ctx.moveTo(oldSx, oldSy);
               ctx.lineTo(sx, sy);
               ctx.lineWidth = radius;
               
               if (isWarp) {
-                  // Kolory hiperprzestrzeni (Niebiesko/Różowe smugi)
                   const hue = 200 + Math.random() * 100;
                   ctx.strokeStyle = `hsl(${hue}, 100%, 80%)`;
               } else {
@@ -193,7 +191,6 @@
               }
               ctx.stroke();
             } else {
-              // Tryb wolny (Kropki)
               ctx.arc(sx, sy, radius, 0, Math.PI * 2);
               ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
               ctx.fill();
@@ -260,7 +257,7 @@
     };
 
     // --- Komponent Wizualizatora Kołowego (Pizza/Tort) ---
-    const PieChart = ({ total, filled, size = 260, interactive = false, selectedSlices = [], onSliceClick = () => {} }) => {
+    const PieChart = ({ total, filled, size = 200, interactive = false, selectedSlices = [], onSliceClick = () => {} }) => {
       if (total === 0) return null;
       const center = size / 2;
       const radius = size / 2 - 10; 
@@ -308,7 +305,7 @@
       }
 
       return (
-        <svg width={size} height={size} className="drop-shadow-lg max-w-full h-auto">
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="drop-shadow-lg max-w-full max-h-full">
           <circle cx={center} cy={center} r={radius} fill="rgba(15, 23, 42, 0.6)" stroke="#B45309" strokeWidth="4" />
           {slices}
         </svg>
@@ -318,7 +315,7 @@
     // --- Komponent Wizualizatora Prostokątnego (Czekolada) ---
     const BarChart = ({ total, filled, interactive = false, selectedSlices = [], onSliceClick = () => {} }) => {
       return (
-        <div className="flex w-full h-32 md:h-40 max-w-md border-4 border-amber-950 rounded-2xl overflow-hidden drop-shadow-lg bg-black/40">
+        <div className="flex w-full h-20 md:h-28 max-w-md border-4 border-amber-950 rounded-xl overflow-hidden drop-shadow-lg bg-black/40">
           {Array.from({ length: total }).map((_, i) => {
             const isFilled = interactive ? selectedSlices[i] : i < filled;
             return (
@@ -336,8 +333,8 @@
     };
 
     // --- Komponent ładnie wyświetlający ułamek ---
-    const FractionText = ({ n, d, size = "text-4xl" }) => (
-      <div className={`inline-flex flex-col items-center justify-center font-black text-white ${size} mx-2 align-middle drop-shadow-md`}>
+    const FractionText = ({ n, d, size = "text-2xl md:text-4xl" }) => (
+      <div className={`inline-flex flex-col items-center justify-center font-black text-white ${size} mx-1 align-middle drop-shadow-md`}>
         <span className="border-b-4 border-white px-2 leading-none pb-1">{n}</span>
         <span className="px-2 leading-none pt-1">{d}</span>
       </div>
@@ -760,131 +757,131 @@
 
       return (
         <>
-          {/* Główna aplikacja, ukrywana podczas drukowania */}
-          <div className="print:hidden min-h-screen p-4 flex flex-col items-center font-sans select-none relative overflow-hidden">
+          {/* Główna aplikacja, ukrywana podczas drukowania. Wymuszony brak scrolla. */}
+          <div className="print:hidden h-[100dvh] w-screen p-2 sm:p-4 flex flex-col items-center font-sans select-none relative overflow-hidden box-border">
             {/* TŁO KOSMICZNE Z EFEKTEM 3D */}
             <Starfield speed={currentSpeed} isWarp={isWarp} />
             
             {/* NAGŁÓWEK */}
-            <header className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-xl p-4 rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col md:flex-row justify-between items-center gap-4 mb-6 border-b-4 border-indigo-500/50">
-              <div className="flex items-center gap-3 font-black text-xl sm:text-3xl">
+            <header className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-xl p-2 sm:p-4 rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col md:flex-row justify-between items-center gap-2 mb-2 sm:mb-4 border-b-4 border-indigo-500/50">
+              <div className="flex items-center gap-2 sm:gap-3 font-black text-lg sm:text-2xl">
                 <div className="bg-indigo-600 p-2 rounded-full text-white shadow-lg shadow-indigo-900">
-                  <Rocket size={32}/> 
+                  <Rocket size={24} /> 
                 </div>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">{t.title}</span>
               </div>
               
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <div className="flex gap-2 bg-slate-800 p-1.5 rounded-full border-2 border-slate-700">
-                  <button onClick={() => handleLangChange('pl')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'pl' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                <div className="flex gap-1 sm:gap-2 bg-slate-800 p-1 sm:p-1.5 rounded-full border-2 border-slate-700">
+                  <button onClick={() => handleLangChange('pl')} className={`w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'pl' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
                     <img src="https://flagcdn.com/pl.svg" alt="Polski" className="w-full h-full object-cover" />
                   </button>
-                  <button onClick={() => handleLangChange('is')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'is' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+                  <button onClick={() => handleLangChange('is')} className={`w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'is' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
                     <img src="https://flagcdn.com/is.svg" alt="Íslenska" className="w-full h-full object-cover" />
                   </button>
-                  <button onClick={() => handleLangChange('en')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'en' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+                  <button onClick={() => handleLangChange('en')} className={`w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'en' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
                     <img src="https://flagcdn.com/gb.svg" alt="English" className="w-full h-full object-cover" />
                   </button>
                 </div>
 
-                <div className="bg-yellow-900/50 px-4 py-2 rounded-full font-bold text-yellow-400 flex items-center gap-2 h-11 border border-yellow-700">
-                  <Star className="fill-yellow-400" size={20}/> <span className="text-xl">{score}</span>
+                <div className="bg-yellow-900/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-yellow-400 flex items-center gap-1 md:gap-2 h-9 md:h-11 border border-yellow-700">
+                  <Star className="fill-yellow-400" size={18}/> <span className="text-lg md:text-xl">{score}</span>
                 </div>
                 
                 {/* NOWY PRZYCISK DYPLOMU */}
                 <button 
                   onClick={() => setShowDiplomaModal(true)} 
-                  className="bg-fuchsia-900/50 px-4 py-2 rounded-full font-bold text-fuchsia-300 hover:bg-fuchsia-800 transition active:scale-95 flex items-center gap-2 h-11 border border-fuchsia-700 shadow-sm"
+                  className="bg-fuchsia-900/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-fuchsia-300 hover:bg-fuchsia-800 transition active:scale-95 flex items-center gap-1 md:gap-2 h-9 md:h-11 border border-fuchsia-700 shadow-sm"
                   title={t.diplomaBtn}
                 >
-                  <Printer size={20} />
-                  <span className="hidden sm:inline">{t.diplomaBtn}</span>
+                  <Printer size={18} />
+                  <span className="hidden md:inline">{t.diplomaBtn}</span>
                 </button>
 
                 <button 
                   onClick={() => setShowRules(true)} 
-                  className="bg-indigo-900/50 px-4 py-2 rounded-full font-bold text-indigo-300 hover:bg-indigo-800 transition active:scale-95 flex items-center gap-2 h-11 border border-indigo-700"
+                  className="bg-indigo-900/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-indigo-300 hover:bg-indigo-800 transition active:scale-95 flex items-center gap-1 md:gap-2 h-9 md:h-11 border border-indigo-700"
                   title={t.rulesTitle}
                 >
-                  <BookOpen size={20} />
+                  <BookOpen size={18} />
                   <span className="hidden lg:inline">{t.rulesTitle}</span>
                 </button>
                 
                 <button 
                   onClick={() => setShowResetConfirm(true)} 
-                  className="bg-slate-800 p-3 rounded-full text-slate-400 hover:bg-red-900/50 hover:text-red-400 transition active:scale-95 h-11 w-11 flex items-center justify-center border border-slate-700 hover:border-red-700"
+                  className="bg-slate-800 p-2 md:p-3 rounded-full text-slate-400 hover:bg-red-900/50 hover:text-red-400 transition active:scale-95 h-9 w-9 md:h-11 md:w-11 flex items-center justify-center border border-slate-700 hover:border-red-700"
                   title={t.resetTitle}
                 >
-                  <RotateCcw size={20} />
+                  <RotateCcw size={18} />
                 </button>
               </div>
             </header>
 
             {/* WYBÓR ZAKŁADKI */}
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-4">
-              <button onClick={() => setTab('learn')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='learn'?'bg-indigo-600 text-white shadow-lg border-indigo-500':'bg-slate-800/80 text-indigo-300 border-slate-600 hover:bg-slate-700 hover:text-indigo-100'}`}><Play size={18} className="inline mr-1 sm:mr-2"/>{t.explore}</button>
-              <button onClick={() => setTab('quiz')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='quiz'?'bg-green-600 text-white shadow-lg border-green-500':'bg-slate-800/80 text-green-300 border-slate-600 hover:bg-slate-700 hover:text-green-100'}`}><Award size={18} className="inline mr-1 sm:mr-2"/>{t.choose}</button>
-              <button onClick={() => setTab('type')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='type'?'bg-purple-600 text-white shadow-lg border-purple-500':'bg-slate-800/80 text-purple-300 border-slate-600 hover:bg-slate-700 hover:text-purple-100'}`}><Pencil size={18} className="inline mr-1 sm:mr-2"/>{t.type}</button>
-              <button onClick={() => setTab('color')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='color'?'bg-orange-600 text-white shadow-lg border-orange-500':'bg-slate-800/80 text-orange-300 border-slate-600 hover:bg-slate-700 hover:text-orange-100'}`}><Paintbrush size={18} className="inline mr-1 sm:mr-2"/>{t.color}</button>
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-2 sm:mb-4">
+              <button onClick={() => setTab('learn')} className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-sm font-bold border-2 transition-all ${tab==='learn'?'bg-indigo-600 text-white shadow-lg border-indigo-500':'bg-slate-800/80 text-indigo-300 border-slate-600 hover:bg-slate-700 hover:text-indigo-100'}`}><Play size={16} className="inline mr-1"/>{t.explore}</button>
+              <button onClick={() => setTab('quiz')} className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-sm font-bold border-2 transition-all ${tab==='quiz'?'bg-green-600 text-white shadow-lg border-green-500':'bg-slate-800/80 text-green-300 border-slate-600 hover:bg-slate-700 hover:text-green-100'}`}><Award size={16} className="inline mr-1"/>{t.choose}</button>
+              <button onClick={() => setTab('type')} className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-sm font-bold border-2 transition-all ${tab==='type'?'bg-purple-600 text-white shadow-lg border-purple-500':'bg-slate-800/80 text-purple-300 border-slate-600 hover:bg-slate-700 hover:text-purple-100'}`}><Pencil size={16} className="inline mr-1"/>{t.type}</button>
+              <button onClick={() => setTab('color')} className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-sm font-bold border-2 transition-all ${tab==='color'?'bg-orange-600 text-white shadow-lg border-orange-500':'bg-slate-800/80 text-orange-300 border-slate-600 hover:bg-slate-700 hover:text-orange-100'}`}><Paintbrush size={16} className="inline mr-1"/>{t.color}</button>
             </div>
 
             {/* WYBÓR TRUDNOŚCI */}
             {tab !== 'learn' && (
-              <div className="relative z-30 flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 bg-slate-900/80 p-2 rounded-full border-2 border-slate-700 shadow-sm backdrop-blur-md max-w-2xl mx-auto">
-                <button onClick={() => handleDiffChange('easy')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='easy'?'bg-green-500/20 border-green-500 text-green-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-green-800 hover:text-green-400'}`}>{t.easy}</button>
-                <button onClick={() => handleDiffChange('medium')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='medium'?'bg-indigo-500/20 border-indigo-500 text-indigo-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-indigo-800 hover:text-indigo-400'}`}>{t.medium}</button>
-                <button onClick={() => handleDiffChange('survival')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 flex items-center gap-1 ${diff==='survival'?'bg-red-500/20 border-red-500 text-red-400 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-red-900 hover:text-red-400'}`}><Flame size={16}/> {t.survival}</button>
-                <button onClick={() => handleDiffChange('hardcore')} className={`px-5 py-2 rounded-full text-sm font-black transition-all border-2 flex items-center gap-1 ${diff==='hardcore'?'bg-slate-950 border-slate-950 text-red-500 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-slate-800 hover:text-slate-100'}`}>💀 {t.hardcore}</button>
+              <div className="relative z-30 flex flex-wrap justify-center gap-2 sm:gap-3 mb-2 sm:mb-4 bg-slate-900/80 p-1.5 rounded-full border-2 border-slate-700 shadow-sm backdrop-blur-md max-w-2xl mx-auto">
+                <button onClick={() => handleDiffChange('easy')} className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all border-2 ${diff==='easy'?'bg-green-500/20 border-green-500 text-green-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-green-800 hover:text-green-400'}`}>{t.easy}</button>
+                <button onClick={() => handleDiffChange('medium')} className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all border-2 ${diff==='medium'?'bg-indigo-500/20 border-indigo-500 text-indigo-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-indigo-800 hover:text-indigo-400'}`}>{t.medium}</button>
+                <button onClick={() => handleDiffChange('survival')} className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all border-2 flex items-center gap-1 ${diff==='survival'?'bg-red-500/20 border-red-500 text-red-400 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-red-900 hover:text-red-400'}`}><Flame size={14}/> {t.survival}</button>
+                <button onClick={() => handleDiffChange('hardcore')} className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs sm:text-sm font-black transition-all border-2 flex items-center gap-1 ${diff==='hardcore'?'bg-slate-950 border-slate-950 text-red-500 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-slate-800 hover:text-slate-100'}`}>💀 {t.hardcore}</button>
               </div>
             )}
 
-            {/* GŁÓWNY KONTENER */}
-            <div className="w-full max-w-5xl relative bg-slate-900/80 backdrop-blur-xl p-6 sm:p-10 rounded-[3rem] shadow-[0_0_40px_rgba(0,0,0,0.5)] border-4 border-indigo-500/30 min-h-[450px] flex flex-col justify-center">
+            {/* GŁÓWNY KONTENER SCENTRALIZOWANY */}
+            <div className="w-full max-w-5xl relative bg-slate-900/80 backdrop-blur-xl p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-[0_0_40px_rgba(0,0,0,0.5)] border-4 border-indigo-500/30 flex-1 min-h-0 flex flex-col justify-center overflow-y-auto">
               
               {streak >= 3 && tab !== 'learn' && (
-                  <div className={`absolute -top-4 -right-4 sm:-right-2 px-4 py-1.5 rounded-full border-2 font-black animate-pulse shadow-md flex items-center gap-1 z-20 ${isWarp ? 'bg-fuchsia-900/90 text-fuchsia-300 border-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.5)] scale-110' : 'bg-orange-900/80 text-orange-400 border-orange-500'}`}>
-                      {isWarp ? <Rocket size={18} /> : <Flame size={18}/>} 
+                  <div className={`absolute -top-3 sm:-top-4 right-2 sm:-right-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border-2 text-xs sm:text-base font-black animate-pulse shadow-md flex items-center gap-1 z-20 ${isWarp ? 'bg-fuchsia-900/90 text-fuchsia-300 border-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.5)] scale-110' : 'bg-orange-900/80 text-orange-400 border-orange-500'}`}>
+                      {isWarp ? <Rocket size={16} /> : <Flame size={16}/>} 
                       {isWarp ? `${t.hyperspace} X${streak}` : `${t.streak} ${streak}`}
                   </div>
               )}
               
               {/* ZAKŁADKA: ODKRYWAJ */}
               {tab === 'learn' && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="flex flex-col items-center">
-                    <div className="flex gap-4 mb-8 bg-slate-800/80 p-2 rounded-2xl border border-slate-700">
-                       <button onClick={() => setVType('pie')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='pie'?'bg-slate-700 shadow text-indigo-300 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.pizza}</button>
-                       <button onClick={() => setVType('bar')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='bar'?'bg-slate-700 shadow text-amber-500 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.chocolate}</button>
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="flex gap-2 sm:gap-4 mb-2 sm:mb-4 bg-slate-800/80 p-2 rounded-2xl border border-slate-700">
+                       <button onClick={() => setVType('pie')} className={`px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-base transition-all ${vType==='pie'?'bg-slate-700 shadow text-indigo-300 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.pizza}</button>
+                       <button onClick={() => setVType('bar')} className={`px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-base transition-all ${vType==='bar'?'bg-slate-700 shadow text-amber-500 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.chocolate}</button>
                     </div>
-                    <div className="h-64 flex items-center justify-center w-full">
-                        {vType === 'pie' ? <PieChart total={ld} filled={ln} /> : <BarChart total={ld} filled={ln} />}
+                    <div className="h-40 md:h-56 lg:h-64 flex items-center justify-center w-full flex-1 min-h-0">
+                        {vType === 'pie' ? <PieChart total={ld} filled={ln} size={220} /> : <BarChart total={ld} filled={ln} />}
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-center justify-center">
-                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-8 text-center">{t.build}</h2>
-                    <div className="bg-slate-800/50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-inner w-full max-w-md flex flex-col gap-5">
-                      <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 sm:mb-4 text-center">{t.build}</h2>
+                    <div className="bg-slate-800/50 p-4 sm:p-6 rounded-[2rem] border-4 border-indigo-500/20 shadow-inner w-full max-w-md flex flex-col gap-2 sm:gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
-                          <button onClick={() => setLn(Math.max(ln-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={28}/></button>
-                          <span className="w-16 text-center font-black text-4xl text-white">{ln}</span>
-                          <button onClick={() => setLn(Math.min(ln+1, ld))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={28}/></button>
+                          <button onClick={() => setLn(Math.max(ln-1, 0))} className="px-4 py-2 sm:py-3 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={24}/></button>
+                          <span className="w-12 sm:w-16 text-center font-black text-3xl sm:text-4xl text-white">{ln}</span>
+                          <button onClick={() => setLn(Math.min(ln+1, ld))} className="px-4 py-2 sm:py-3 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={24}/></button>
                         </div>
-                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
+                        <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
                       </div>
                       
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1 h-2.5 bg-slate-500 rounded-full mx-1"></div>
-                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <div className="flex-1 h-2 bg-slate-500 rounded-full mx-1"></div>
+                        <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
                       </div>
                       
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
-                          <button onClick={() => {const d=Math.max(ld-1,1); setLd(d); if(ln>d) setLn(d);}} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={28}/></button>
-                          <span className="w-16 text-center font-black text-4xl text-white">{ld}</span>
-                          <button onClick={() => setLd(Math.min(ld+1, 16))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={28}/></button>
+                          <button onClick={() => {const d=Math.max(ld-1,1); setLd(d); if(ln>d) setLn(d);}} className="px-4 py-2 sm:py-3 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={24}/></button>
+                          <span className="w-12 sm:w-16 text-center font-black text-3xl sm:text-4xl text-white">{ld}</span>
+                          <button onClick={() => setLd(Math.min(ld+1, 16))} className="px-4 py-2 sm:py-3 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={24}/></button>
                         </div>
-                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
+                        <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
                       </div>
                     </div>
                   </div>
@@ -893,19 +890,19 @@
 
               {/* ZAKŁADKA: KOLORUJ */}
               {tab === 'color' && colQ && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="flex justify-center items-center h-64 md:h-80 w-full order-2 md:order-1">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                  <div className="flex justify-center items-center h-40 md:h-56 lg:h-64 w-full order-2 md:order-1 flex-1 min-h-0">
                     {colQ.type === 'pie' 
-                      ? <PieChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} size={260}/> 
+                      ? <PieChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} size={220}/> 
                       : <BarChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} />
                     }
                   </div>
 
-                  <div className="flex flex-col items-center justify-center order-1 md:order-2">
-                    <h2 className="text-3xl sm:text-4xl font-black mb-8 text-white text-center">{t.colorTitle}</h2>
-                    <div className="bg-slate-800/80 px-10 py-6 rounded-3xl border-4 border-slate-700 mb-8 flex flex-col items-center gap-4">
-                      <span className="text-xl font-bold text-slate-400 uppercase tracking-wider">{t.target}</span> 
-                      <FractionText n={colQ.n} d={colQ.d} size="text-7xl" />
+                  <div className="flex flex-col items-center justify-center order-1 md:order-2 h-full">
+                    <h2 className="text-2xl sm:text-3xl font-black mb-2 sm:mb-4 text-white text-center">{t.colorTitle}</h2>
+                    <div className="bg-slate-800/80 px-6 sm:px-10 py-4 sm:py-6 rounded-3xl border-4 border-slate-700 mb-4 flex flex-col items-center gap-2 sm:gap-4">
+                      <span className="text-lg sm:text-xl font-bold text-slate-400 uppercase tracking-wider">{t.target}</span> 
+                      <FractionText n={colQ.n} d={colQ.d} size="text-5xl sm:text-6xl" />
                     </div>
                     
                     <button 
@@ -915,9 +912,9 @@
                             else handleLoss();
                         }} 
                         disabled={fb !== null}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-5 rounded-full font-black text-2xl shadow-xl shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full max-w-sm justify-center"
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 sm:py-4 rounded-full font-black text-xl shadow-xl shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed w-full max-w-sm justify-center mt-auto"
                     >
-                        <Check size={32} strokeWidth={3}/> {t.done}
+                        <Check size={28} strokeWidth={3}/> {t.done}
                     </button>
                   </div>
                 </div>
@@ -925,22 +922,22 @@
 
               {/* ZAKŁADKA: QUIZ */}
               {tab === 'quiz' && quiz && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="h-64 md:h-80 flex items-center justify-center w-full">
-                      {quiz.type === 'pie' ? <PieChart total={quiz.d} filled={quiz.n} size={260} /> : <BarChart total={quiz.d} filled={quiz.n}/>}
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                  <div className="h-40 md:h-56 lg:h-64 flex items-center justify-center w-full flex-1 min-h-0">
+                      {quiz.type === 'pie' ? <PieChart total={quiz.d} filled={quiz.n} size={220} /> : <BarChart total={quiz.d} filled={quiz.n}/>}
                   </div>
 
-                  <div className="flex flex-col items-center w-full">
-                    <h2 className="text-3xl sm:text-4xl font-black mb-10 text-white text-center">{t.chooseTitle}</h2>
-                    <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-sm">
+                  <div className="flex flex-col items-center w-full h-full justify-center">
+                    <h2 className="text-2xl sm:text-3xl font-black mb-4 text-white text-center">{t.chooseTitle}</h2>
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-sm">
                       {quiz.opts.map((o, i) => (
                           <button 
                             key={i} 
                             onClick={() => { o.n === quiz.n && o.d === quiz.d ? handleWin(genQuiz) : handleLoss(); }} 
                             disabled={fb !== null}
-                            className="bg-slate-800 border-4 border-slate-600 hover:border-indigo-400 hover:bg-slate-700 py-8 rounded-3xl flex justify-center transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-slate-800 border-4 border-slate-600 hover:border-indigo-400 hover:bg-slate-700 py-4 sm:py-6 rounded-2xl sm:rounded-3xl flex justify-center transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <FractionText n={o.n} d={o.d} size="text-5xl"/>
+                            <FractionText n={o.n} d={o.d} size="text-3xl sm:text-4xl"/>
                           </button>
                       ))}
                     </div>
@@ -950,36 +947,36 @@
 
               {/* ZAKŁADKA: WPISZ */}
               {tab === 'type' && typeQ && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                   <div className="h-64 md:h-80 flex items-center justify-center w-full">
-                        {typeQ.type === 'pie' ? <PieChart total={typeQ.d} filled={typeQ.n} size={260}/> : <BarChart total={typeQ.d} filled={typeQ.n}/>}
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                   <div className="h-40 md:h-56 lg:h-64 flex items-center justify-center w-full flex-1 min-h-0">
+                        {typeQ.type === 'pie' ? <PieChart total={typeQ.d} filled={typeQ.n} size={220}/> : <BarChart total={typeQ.d} filled={typeQ.n}/>}
                     </div>
 
-                    <div className="flex flex-col items-center">
-                      <h2 className="text-3xl sm:text-4xl font-black mb-10 text-white text-center">{t.typeTitle}</h2>
-                      <div className="bg-slate-800/50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-purple-500/20 flex flex-col gap-5 mb-8 w-full max-w-md">
+                    <div className="flex flex-col items-center h-full justify-center">
+                      <h2 className="text-2xl sm:text-3xl font-black mb-4 text-white text-center">{t.typeTitle}</h2>
+                      <div className="bg-slate-800/50 p-4 sm:p-6 rounded-[2rem] border-4 border-purple-500/20 flex flex-col gap-3 mb-4 w-full max-w-md">
                         
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
                           <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
-                              <button onClick={() => setTn(s => Math.max(s-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={28}/></button>
-                              <span className="w-16 text-center font-black text-4xl text-white">{tn}</span>
-                              <button onClick={() => setTn(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={28}/></button>
+                              <button onClick={() => setTn(s => Math.max(s-1, 0))} className="px-4 py-2 sm:py-3 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={24}/></button>
+                              <span className="w-12 sm:w-16 text-center font-black text-2xl sm:text-3xl text-white">{tn}</span>
+                              <button onClick={() => setTn(s => s+1)} className="px-4 py-2 sm:py-3 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={24}/></button>
                           </div>
-                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
+                          <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
                         </div>
                         
-                        <div className="flex items-center gap-4">
-                          <div className="flex-1 h-2.5 bg-slate-500 rounded-full mx-1"></div>
-                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
+                        <div className="flex items-center gap-2 sm:gap-4">
+                          <div className="flex-1 h-2 bg-slate-500 rounded-full mx-1"></div>
+                          <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
                         </div>
                         
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
                           <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
-                              <button onClick={() => setTd(s => Math.max(s-1, 1))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={28}/></button>
-                              <span className="w-16 text-center font-black text-4xl text-white">{td}</span>
-                              <button onClick={() => setTd(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={28}/></button>
+                              <button onClick={() => setTd(s => Math.max(s-1, 1))} className="px-4 py-2 sm:py-3 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={24}/></button>
+                              <span className="w-12 sm:w-16 text-center font-black text-2xl sm:text-3xl text-white">{td}</span>
+                              <button onClick={() => setTd(s => s+1)} className="px-4 py-2 sm:py-3 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={24}/></button>
                           </div>
-                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
+                          <span className="w-20 sm:w-32 text-slate-300 font-bold text-xs sm:text-sm lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
                         </div>
 
                       </div>
@@ -987,9 +984,9 @@
                       <button 
                           onClick={() => { tn === typeQ.n && td === typeQ.d ? handleWin(genType) : handleLoss(); }} 
                           disabled={fb !== null}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-12 py-5 rounded-full font-black text-xl sm:text-2xl shadow-xl shadow-purple-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 w-full max-w-sm"
+                          className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 sm:py-4 rounded-full font-black text-xl shadow-xl shadow-purple-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full max-w-sm mt-auto"
                       >
-                          <Check size={32} strokeWidth={3}/> {t.check}
+                          <Check size={28} strokeWidth={3}/> {t.check}
                       </button>
                     </div>
                 </div>
@@ -997,29 +994,29 @@
 
               {/* FEEDBACK OVERLAY (Zwycięstwo / Porażka) */}
               {fb && (
-                <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-40 animate-in fade-in zoom-in-95 duration-200 border-4 border-slate-800">
+                <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] flex flex-col items-center justify-center z-40 animate-in fade-in zoom-in-95 duration-200 border-4 border-slate-800">
                   {fb === 'ok' ? (
                       <>
-                          <CheckCircle2 size={120} className="text-green-400 mb-4 animate-bounce"/>
-                          <h3 className="text-4xl sm:text-6xl font-black text-green-400 tracking-tight">{t.awesome}</h3>
-                          <p className="font-bold text-green-300 text-2xl sm:text-3xl mt-4 bg-green-900/50 px-8 py-3 rounded-full border border-green-700">+{DIFF_SETTINGS[diff].points} {t.points}</p>
+                          <CheckCircle2 size={80} className="text-green-400 mb-2 sm:mb-4 animate-bounce"/>
+                          <h3 className="text-3xl sm:text-5xl font-black text-green-400 tracking-tight">{t.awesome}</h3>
+                          <p className="font-bold text-green-300 text-xl sm:text-2xl mt-4 bg-green-900/50 px-6 py-2 sm:py-3 rounded-full border border-green-700">+{DIFF_SETTINGS[diff].points} {t.points}</p>
                       </>
                   ) : (
                       <>
-                          <XCircle size={120} className="text-red-500 mb-4"/>
-                          <h3 className="text-3xl sm:text-5xl font-black text-red-500 text-center tracking-tight">{t.tryAgain}</h3>
+                          <XCircle size={80} className="text-red-500 mb-2 sm:mb-4"/>
+                          <h3 className="text-2xl sm:text-4xl font-black text-red-500 text-center tracking-tight">{t.tryAgain}</h3>
                           {diff === 'survival' && (
-                              <div className="mt-8 flex flex-col items-center animate-pulse">
-                                  <Flame size={56} className="text-orange-500 mb-2" />
-                                  <p className="font-black text-red-400 text-2xl sm:text-3xl bg-red-900/50 px-8 py-4 rounded-2xl text-center border-2 border-red-800 whitespace-pre-line">
+                              <div className="mt-4 sm:mt-8 flex flex-col items-center animate-pulse">
+                                  <Flame size={48} className="text-orange-500 mb-2" />
+                                  <p className="font-black text-red-400 text-xl sm:text-2xl bg-red-900/50 px-6 py-3 rounded-2xl text-center border-2 border-red-800 whitespace-pre-line">
                                       {t.survivalLoss}
                                   </p>
                               </div>
                           )}
                           {diff === 'hardcore' && (
-                              <div className="mt-8 flex flex-col items-center animate-pulse">
-                                  <span className="text-6xl mb-2">💀</span>
-                                  <p className="font-black text-red-200 text-2xl sm:text-3xl bg-slate-950 px-8 py-4 rounded-2xl text-center border-2 border-slate-700 whitespace-pre-line">
+                              <div className="mt-4 sm:mt-8 flex flex-col items-center animate-pulse">
+                                  <span className="text-5xl sm:text-6xl mb-2">💀</span>
+                                  <p className="font-black text-red-200 text-xl sm:text-2xl bg-slate-950 px-6 py-3 rounded-2xl text-center border-2 border-slate-700 whitespace-pre-line">
                                       {t.hardcoreLoss}
                                   </p>
                               </div>
@@ -1031,38 +1028,38 @@
 
               {/* MODAL: DYPLOM */}
               {showDiplomaModal && (
-                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-6">
-                      <div className="bg-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-fuchsia-500/50">
-                          <Printer size={48} className="text-fuchsia-400 mb-4"/>
-                          <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 text-center">{t.diplomaTitle}</h3>
-                          <p className="text-slate-400 font-medium mb-6 text-center">{t.diplomaDesc}</p>
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
+                      <div className="bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-fuchsia-500/50">
+                          <Printer size={40} className="text-fuchsia-400 mb-2 sm:mb-4"/>
+                          <h3 className="text-xl sm:text-2xl font-black text-white mb-2 text-center">{t.diplomaTitle}</h3>
+                          <p className="text-slate-400 text-sm sm:text-base font-medium mb-4 sm:mb-6 text-center">{t.diplomaDesc}</p>
                           
-                          <div className="w-full mb-4">
-                              <label className="block text-slate-300 font-bold mb-2">{t.studentNameInput}</label>
+                          <div className="w-full mb-3 sm:mb-4">
+                              <label className="block text-slate-300 font-bold mb-1 sm:mb-2 text-sm sm:text-base">{t.studentNameInput}</label>
                               <input 
                                 type="text" 
                                 value={studentName} 
                                 onChange={handleStudentChange} 
-                                className="w-full p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
+                                className="w-full p-2 sm:p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
                                 placeholder="Np. Jan Kowalski" 
                               />
                           </div>
                           
-                          <div className="w-full mb-8">
-                              <label className="block text-slate-300 font-bold mb-2">{t.teacherNameInput}</label>
+                          <div className="w-full mb-6 sm:mb-8">
+                              <label className="block text-slate-300 font-bold mb-1 sm:mb-2 text-sm sm:text-base">{t.teacherNameInput}</label>
                               <input 
                                 type="text" 
                                 value={teacherName} 
                                 onChange={handleTeacherChange} 
-                                className="w-full p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
+                                className="w-full p-2 sm:p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
                                 placeholder="Np. Anna Nowak" 
                               />
                           </div>
 
-                          <div className="flex gap-4 w-full">
-                              <button onClick={() => setShowDiplomaModal(false)} className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold transition active:scale-95">{t.close}</button>
-                              <button onClick={handlePrintDiploma} className="flex-1 px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-2xl font-bold transition active:scale-95 shadow-lg shadow-fuchsia-900/50 flex items-center justify-center gap-2">
-                                <Printer size={20} /> {t.printBtn}
+                          <div className="flex gap-3 sm:gap-4 w-full">
+                              <button onClick={() => setShowDiplomaModal(false)} className="flex-1 px-3 py-2 sm:py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold transition active:scale-95">{t.close}</button>
+                              <button onClick={handlePrintDiploma} className="flex-1 px-3 py-2 sm:py-3 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-2xl font-bold transition active:scale-95 shadow-lg shadow-fuchsia-900/50 flex items-center justify-center gap-2">
+                                <Printer size={18} /> {t.printBtn}
                               </button>
                           </div>
                       </div>
@@ -1071,21 +1068,21 @@
 
               {/* POTWIERDZENIE RESETU WYNIKÓW */}
               {showResetConfirm && (
-                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-6">
-                      <div className="bg-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-md w-full border-4 border-slate-700">
-                          <RotateCcw size={64} className="text-indigo-400 mb-4"/>
-                          <h3 className="text-3xl font-black text-white mb-2">{t.resetTitle}</h3>
-                          <p className="text-slate-300 font-medium mb-8 text-lg">{t.resetDesc}</p>
-                          <div className="flex gap-4 w-full">
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
+                      <div className="bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-md w-full border-4 border-slate-700">
+                          <RotateCcw size={48} className="text-indigo-400 mb-2 sm:mb-4"/>
+                          <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">{t.resetTitle}</h3>
+                          <p className="text-slate-300 font-medium mb-6 sm:mb-8 text-sm sm:text-lg">{t.resetDesc}</p>
+                          <div className="flex gap-3 sm:gap-4 w-full">
                               <button 
                                   onClick={() => setShowResetConfirm(false)} 
-                                  className="flex-1 px-6 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xl transition active:scale-95"
+                                  className="flex-1 px-4 py-3 sm:py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-lg sm:text-xl transition active:scale-95"
                               >
                                   {t.no}
                               </button>
                               <button 
                                   onClick={confirmReset} 
-                                  className="flex-1 px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-red-900/50"
+                                  className="flex-1 px-4 py-3 sm:py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-lg sm:text-xl transition active:scale-95 shadow-lg shadow-red-900/50"
                               >
                                   {t.yes}
                               </button>
@@ -1096,33 +1093,33 @@
 
               {/* MODAL: ZASADY GRY (LEGENDA) */}
               {showRules && (
-                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
-                      <div className="bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-slate-700">
-                          <BookOpen size={48} className="text-indigo-400 mb-4"/>
-                          <h3 className="text-2xl sm:text-3xl font-black text-white mb-6 text-center">{t.rulesTitle}</h3>
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
+                      <div className="bg-slate-800 p-4 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-slate-700">
+                          <BookOpen size={40} className="text-indigo-400 mb-2 sm:mb-4"/>
+                          <h3 className="text-xl sm:text-3xl font-black text-white mb-4 sm:mb-6 text-center">{t.rulesTitle}</h3>
                           
-                          <div className="flex flex-col gap-3 w-full mb-8">
-                              <div className="bg-green-900/30 p-3 sm:p-4 rounded-2xl border border-green-500/30">
-                                  <strong className="text-green-400 block text-lg">{t.easy}</strong>
-                                  <span className="text-slate-300 font-medium">{t.ruleEasy}</span>
+                          <div className="flex flex-col gap-2 sm:gap-3 w-full mb-6 sm:mb-8">
+                              <div className="bg-green-900/30 p-2 sm:p-4 rounded-2xl border border-green-500/30">
+                                  <strong className="text-green-400 block text-base sm:text-lg">{t.easy}</strong>
+                                  <span className="text-slate-300 font-medium text-xs sm:text-base">{t.ruleEasy}</span>
                               </div>
-                              <div className="bg-indigo-900/30 p-3 sm:p-4 rounded-2xl border border-indigo-500/30">
-                                  <strong className="text-indigo-400 block text-lg">{t.medium}</strong>
-                                  <span className="text-slate-300 font-medium">{t.ruleMedium}</span>
+                              <div className="bg-indigo-900/30 p-2 sm:p-4 rounded-2xl border border-indigo-500/30">
+                                  <strong className="text-indigo-400 block text-base sm:text-lg">{t.medium}</strong>
+                                  <span className="text-slate-300 font-medium text-xs sm:text-base">{t.ruleMedium}</span>
                               </div>
-                              <div className="bg-orange-900/30 p-3 sm:p-4 rounded-2xl border border-orange-500/30">
-                                  <strong className="text-orange-400 block text-lg flex items-center gap-1"><Flame size={18}/> {t.survival}</strong>
-                                  <span className="text-slate-300 font-medium">{t.ruleSurvival}</span>
+                              <div className="bg-orange-900/30 p-2 sm:p-4 rounded-2xl border border-orange-500/30">
+                                  <strong className="text-orange-400 block text-base sm:text-lg flex items-center gap-1"><Flame size={16}/> {t.survival}</strong>
+                                  <span className="text-slate-300 font-medium text-xs sm:text-base">{t.ruleSurvival}</span>
                               </div>
-                              <div className="bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-700">
-                                  <strong className="text-white block text-lg flex items-center gap-1">💀 {t.hardcore}</strong>
-                                  <span className="text-slate-400 font-medium">{t.ruleHardcore}</span>
+                              <div className="bg-slate-900 p-2 sm:p-4 rounded-2xl border border-slate-700">
+                                  <strong className="text-white block text-base sm:text-lg flex items-center gap-1">💀 {t.hardcore}</strong>
+                                  <span className="text-slate-400 font-medium text-xs sm:text-base">{t.ruleHardcore}</span>
                               </div>
                           </div>
 
                           <button 
                               onClick={() => setShowRules(false)} 
-                              className="w-full px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-indigo-900/50"
+                              className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg sm:text-xl transition active:scale-95 shadow-lg shadow-indigo-900/50"
                           >
                               {t.close}
                           </button>
@@ -1131,8 +1128,8 @@
               )}
             </div>
 
-            <footer className="mt-8 mb-4 text-center w-full z-10 relative">
-              <p className="text-indigo-300 font-medium text-sm drop-shadow-md">
+            <footer className="mt-2 mb-1 text-center w-full z-10 relative">
+              <p className="text-indigo-300 font-medium text-xs sm:text-sm drop-shadow-md">
                 {t.footer} <span className="text-white font-bold uppercase tracking-wider">Mirosław Miras</span>
               </p>
             </footer>
