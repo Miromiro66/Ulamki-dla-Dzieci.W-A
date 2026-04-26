@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Wesołe Ułamki!</title>
+  <title>Kosmiczne Ułamki!</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,22 +15,111 @@
   <!-- Babel (do obsługi JSX w przeglądarce) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+  <!-- Czcionki do Dyplomu -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
   <!-- Firebase (wersja compat dla plików HTML) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      background-color: #050b14;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Kosmiczne tło z mgławicami */
+    .space-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -3;
+      background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+    }
+
+    /* Lecące gwiazdy - warstwa wolna (dalsza) */
+    .stars-slow {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -2;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ccircle cx='50' cy='50' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='150' cy='120' r='2' fill='white' opacity='0.8'/%3E%3Ccircle cx='250' cy='40' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='320' cy='200' r='2.5' fill='white' opacity='0.9'/%3E%3Ccircle cx='80' cy='300' r='1.5' fill='white' opacity='0.5'/%3E%3Ccircle cx='200' cy='350' r='2' fill='white' opacity='1'/%3E%3Ccircle cx='350' cy='380' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='10' cy='220' r='2' fill='white' opacity='0.9'/%3E%3Ccircle cx='280' cy='180' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='180' cy='25' r='2' fill='white' opacity='0.8'/%3E%3C/svg%3E");
+      animation: starMove 40s linear infinite;
+    }
+
+    /* Lecące gwiazdy - warstwa szybka (bliższa) */
+    .stars-fast {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Ccircle cx='40' cy='80' r='2' fill='white' opacity='0.7'/%3E%3Ccircle cx='200' cy='150' r='2.5' fill='white' opacity='1'/%3E%3Ccircle cx='280' cy='50' r='2' fill='white' opacity='0.9'/%3E%3Ccircle cx='120' cy='250' r='2' fill='white' opacity='0.8'/%3E%3Ccircle cx='50' cy='280' r='3' fill='white' opacity='1'/%3E%3Ccircle cx='220' cy='10' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='150' cy='200' r='2' fill='white' opacity='0.9'/%3E%3C/svg%3E");
+      animation: starMove 20s linear infinite;
+    }
+
+    @keyframes starMove {
+      from { background-position: 0 0; }
+      to { background-position: 0 1200px; }
+    }
+
+    /* ======================================================= */
+    /* WYMUSZONY WYGLĄD DYPLOMU PIONOWEGO TYLKO DO DRUKU       */
+    /* ======================================================= */
+    @media print {
+        @page { size: A4 portrait; margin: 0; }
+        
+        html, body {
+            width: 100% !important; height: 100% !important; margin: 0 !important; padding: 0 !important;
+            background-color: #0b1120 !important;
+            -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+        }
+        
+        /* Zapewnienie poprawnych kolorów do druku */
+        #diploma-print-area {
+            position: fixed !important; left: 0 !important; top: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            display: flex !important; justify-content: center !important; align-items: center !important;
+            margin: 0 !important; padding: 0 !important; z-index: 9999 !important; background-color: #0b1120 !important;
+        }
+        
+        .print-bg-img {
+            position: absolute !important; top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important; object-fit: cover !important;
+            opacity: 0.75 !important; z-index: -2 !important;
+        }
+
+        .print-bg-overlay {
+            position: absolute !important; top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            background: linear-gradient(180deg, rgba(11,17,32,0.85) 0%, rgba(11,17,32,0.2) 100%) !important;
+            z-index: -1 !important;
+        }
+        
+        .print-diploma-border {
+            position: relative !important; z-index: 10 !important; width: 88% !important; height: 94% !important;
+            border: 3px solid #d4af37 !important; outline: 15px solid rgba(212, 175, 55, 0.1) !important;
+            outline-offset: -20px !important; padding: 4rem 3rem !important; display: flex !important;
+            flex-direction: column !important; align-items: center !important; box-sizing: border-box !important;
+            background: rgba(15, 23, 42, 0.7) !important;
+        }
+    }
+  </style>
 </head>
-<body class="bg-blue-50 text-slate-900">
+<body class="text-slate-100">
+  <div class="space-bg print:hidden"></div>
+  <div class="stars-slow print:hidden"></div>
+  <div class="stars-fast print:hidden"></div>
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // --- Wbudowane ikony SVG (Zamiast awaryjnej biblioteki zewnętrznej) ---
+    // --- Wbudowane ikony SVG ---
     const iconPaths = {
       Star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
       Award: '<circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>',
-      Smile: '<circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line>',
+      Rocket: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>',
       Play: '<polygon points="5 3 19 12 5 21 5 3"></polygon>',
       CheckCircle2: '<circle cx="12" cy="12" r="10"></circle><polyline points="16 8 10 14 8 12"></polyline>',
       XCircle: '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>',
@@ -41,7 +130,8 @@
       Check: '<polyline points="20 6 9 17 4 12"></polyline>',
       RotateCcw: '<polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>',
       Flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>',
-      BookOpen: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>'
+      BookOpen: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>',
+      Printer: '<polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect width="12" height="8" x="6" y="14"></rect>'
     };
 
     const createIcon = (name) => ({ size = 24, className = "", fill = "none", ...props }) => (
@@ -50,7 +140,7 @@
 
     const Star = createIcon('Star');
     const Award = createIcon('Award');
-    const Smile = createIcon('Smile');
+    const Rocket = createIcon('Rocket');
     const Play = createIcon('Play');
     const CheckCircle2 = createIcon('CheckCircle2');
     const XCircle = createIcon('XCircle');
@@ -62,8 +152,99 @@
     const RotateCcw = createIcon('RotateCcw');
     const Flame = createIcon('Flame');
     const BookOpen = createIcon('BookOpen');
+    const Printer = createIcon('Printer');
 
-    // --- Inicjalizacja Bazy Danych Firebase (Wrapper do starej składni dla HTML) ---
+    // --- ANIMOWANE TŁO 3D (Hiperprzestrzeń) ---
+    const Starfield = ({ speed, isWarp }) => {
+      const canvasRef = useRef(null);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        const numStars = 800; // Ilość gwiazd
+        const stars = Array.from({ length: numStars }, () => ({
+          x: (Math.random() - 0.5) * 3000,
+          y: (Math.random() - 0.5) * 3000,
+          z: Math.random() * 2000 + 1
+        }));
+
+        const fov = 800;
+
+        const render = () => {
+          ctx.clearRect(0, 0, width, height);
+          const cx = width / 2;
+          const cy = height / 2;
+
+          for (let i = 0; i < numStars; i++) {
+            const star = stars[i];
+            const oldZ = star.z;
+            star.z -= speed;
+
+            // Gdy gwiazda przeleci za naszą kamerę - respawn z przodu
+            if (star.z <= 0) {
+              star.z += 2000;
+              star.x = (Math.random() - 0.5) * 3000;
+              star.y = (Math.random() - 0.5) * 3000;
+              continue; 
+            }
+
+            const sx = (star.x / star.z) * fov + cx;
+            const sy = (star.y / star.z) * fov + cy;
+            const oldSx = (star.x / oldZ) * fov + cx;
+            const oldSy = (star.y / oldZ) * fov + cy;
+
+            const radius = Math.max(0.5, 2000 / star.z * 0.8);
+
+            ctx.beginPath();
+            if (speed > 5 || isWarp) {
+              // Tryb szybkiego lotu / hiperprzestrzeni (Rysujemy smugi świetlne)
+              ctx.moveTo(oldSx, oldSy);
+              ctx.lineTo(sx, sy);
+              ctx.lineWidth = radius;
+              
+              if (isWarp) {
+                  // Kolory hiperprzestrzeni (Niebiesko/Różowe smugi)
+                  const hue = 200 + Math.random() * 100;
+                  ctx.strokeStyle = `hsl(${hue}, 100%, 80%)`;
+              } else {
+                  ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+              }
+              ctx.stroke();
+            } else {
+              // Tryb wolny (Kropki)
+              ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+              ctx.fill();
+            }
+          }
+          animationFrameId = requestAnimationFrame(render);
+        };
+        render();
+
+        const onResize = () => {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        };
+        window.addEventListener('resize', onResize);
+        return () => {
+          window.removeEventListener('resize', onResize);
+          cancelAnimationFrame(animationFrameId);
+        };
+      }, [speed, isWarp]);
+
+      return <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: -2, pointerEvents: 'none' }} />;
+    };
+
+    // --- Inicjalizacja Bazy Danych Firebase ---
     const initializeApp = (cfg) => firebase.initializeApp(cfg);
     const getAuth = (app) => firebase.auth(app);
     const signInWithCustomToken = (auth, token) => auth.signInWithCustomToken(token);
@@ -91,7 +272,7 @@
     }
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-    // --- Funkcje pomocnicze do zapisu (Dla Twojego GitHuba, oparte o pliki cookie) ---
+    // --- Funkcje pomocnicze do zapisu ---
     const setCookie = (name, value, days = 365) => {
       const d = new Date();
       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -162,7 +343,7 @@
     // --- Komponent Wizualizatora Prostokątnego (Czekolada) ---
     const BarChart = ({ total, filled, interactive = false, selectedSlices = [], onSliceClick = () => {} }) => {
       return (
-        <div className="flex w-full h-32 md:h-40 max-w-md border-4 border-amber-900 rounded-2xl overflow-hidden drop-shadow-md bg-amber-50">
+        <div className="flex w-full h-32 md:h-40 max-w-md border-4 border-amber-900 rounded-2xl overflow-hidden drop-shadow-md bg-amber-950">
           {Array.from({ length: total }).map((_, i) => {
             const isFilled = interactive ? selectedSlices[i] : i < filled;
             return (
@@ -170,8 +351,8 @@
                 key={i} 
                 onClick={() => interactive && onSliceClick(i)}
                 className={`flex-1 border-r-4 last:border-r-0 border-amber-900 
-                  ${interactive ? 'cursor-pointer hover:bg-amber-200 transition-colors' : 'transition-colors duration-500'}
-                  ${isFilled ? 'bg-amber-700' : 'bg-amber-100'}`} 
+                  ${interactive ? 'cursor-pointer hover:bg-amber-800 transition-colors' : 'transition-colors duration-500'}
+                  ${isFilled ? 'bg-amber-600' : 'bg-amber-900'}`} 
               />
             );
           })}
@@ -181,8 +362,8 @@
 
     // --- Komponent ładnie wyświetlający ułamek ---
     const FractionText = ({ n, d, size = "text-4xl" }) => (
-      <div className={`inline-flex flex-col items-center justify-center font-black text-slate-800 ${size} mx-2 align-middle`}>
-        <span className="border-b-4 border-slate-800 px-2 leading-none pb-1">{n}</span>
+      <div className={`inline-flex flex-col items-center justify-center font-black text-white ${size} mx-2 align-middle drop-shadow-md`}>
+        <span className="border-b-4 border-white px-2 leading-none pb-1">{n}</span>
         <span className="px-2 leading-none pt-1">{d}</span>
       </div>
     );
@@ -190,7 +371,7 @@
     // --- Słownik Tłumaczeń ---
     const translations = {
       pl: {
-        title: "Wesołe Ułamki!",
+        title: "Kosmiczne Ułamki!",
         explore: "Odkrywaj",
         choose: "Wybierz",
         type: "Wpisz",
@@ -200,8 +381,8 @@
         survival: "SURVIVAL!",
         streak: "Seria:",
         build: "Zbuduj swój ułamek!",
-        pizza: "Pizza 🍕",
-        chocolate: "Czekolada 🍫",
+        pizza: "Księżycowa Pizza 🍕",
+        chocolate: "Gwiezdna Czekolada 🍫",
         colorTitle: "Pokoloruj ułamek!",
         target: "Cel:",
         done: "GOTOWE!",
@@ -227,10 +408,31 @@
         ruleMedium: "ułamki do 10 części (+10 pkt)",
         ruleSurvival: "ułamki do 16 części (+15 pkt, błąd = -50 pkt)",
         ruleHardcore: "ułamki do 20 części (+20 pkt, błąd = strata wszystkich punktów!)",
-        close: "Zamknij"
+        close: "Zamknij",
+        loading: "Ładowanie statku kosmicznego...",
+        hyperspace: "HIPERPRZESTRZEŃ!",
+        
+        // Dyplom tłumaczenia
+        diplomaBtn: "Dyplom",
+        diplomaTitle: "Odbiór Dyplomu",
+        diplomaDesc: "Wpisz dane i wygeneruj pamiątkowy kosmiczny dyplom!",
+        studentNameInput: "Imię i nazwisko ucznia:",
+        teacherNameInput: "Imię nauczyciela (Dowódcy):",
+        printBtn: "Drukuj Kosmiczny Dyplom",
+        receives: "Otrzymuje",
+        rank: "Z rangą",
+        scoreText: "Zdobyte punkty",
+        dateText: "Data misji:",
+        commanderText: "Dowódca misji",
+        diplomaAlert: "Musisz zdobyć więcej punktów, aby otrzymać dyplom!",
+        
+        rankKadet: "Kosmiczny Kadet",
+        rankPilot: "Gwiezdny Pilot",
+        rankKapitan: "Kapitan Floty",
+        rankMistrz: "Mistrz Galaktyki"
       },
       is: {
-        title: "Skemmtileg brot!",
+        title: "Geimbrot!",
         explore: "Skoða",
         choose: "Velja",
         type: "Skrifa",
@@ -240,8 +442,8 @@
         survival: "SURVIVAL!",
         streak: "Röð:",
         build: "Búðu til þitt brot!",
-        pizza: "Pítsa 🍕",
-        chocolate: "Súkkulaði 🍫",
+        pizza: "Tunglpítsa 🍕",
+        chocolate: "Stjörnusúkkulaði 🍫",
         colorTitle: "Litaðu brotið!",
         target: "Markmið:",
         done: "TILBÚIÐ!",
@@ -267,10 +469,30 @@
         ruleMedium: "brot allt að 10 hlutar (+10 stig)",
         ruleSurvival: "brot allt að 16 hlutar (+15 stig, villa = -50 stig)",
         ruleHardcore: "brot allt að 20 hlutar (+20 stig, villa = tapar öllu!)",
-        close: "Loka"
+        close: "Loka",
+        loading: "Hleður geimskipið...",
+        hyperspace: "LÝSHRAÐI!",
+        
+        diplomaBtn: "Prófskírteini",
+        diplomaTitle: "Sækja prófskírteini",
+        diplomaDesc: "Sláðu inn upplýsingar og prentaðu geimskírteinið þitt!",
+        studentNameInput: "Fullt nafn nemanda:",
+        teacherNameInput: "Nafn kennara (Skipherra):",
+        printBtn: "Prenta",
+        receives: "Veitt til",
+        rank: "Með stöðu",
+        scoreText: "Stig",
+        dateText: "Dagsetning:",
+        commanderText: "Skipherra",
+        diplomaAlert: "Þú þarft að fá stig til að fá prófskírteini!",
+        
+        rankKadet: "Geimferðanemi",
+        rankPilot: "Stjörnuflugmaður",
+        rankKapitan: "Flotaskipherra",
+        rankMistrz: "Meistari Vetrarbrautarinnar"
       },
       en: {
-        title: "Fun Fractions!",
+        title: "Space Fractions!",
         explore: "Explore",
         choose: "Choose",
         type: "Type",
@@ -280,8 +502,8 @@
         survival: "SURVIVAL!",
         streak: "Streak:",
         build: "Build your fraction!",
-        pizza: "Pizza 🍕",
-        chocolate: "Chocolate 🍫",
+        pizza: "Moon Pizza 🍕",
+        chocolate: "Star Chocolate 🍫",
         colorTitle: "Color the fraction!",
         target: "Target:",
         done: "DONE!",
@@ -307,7 +529,27 @@
         ruleMedium: "fractions up to 10 parts (+10 pts)",
         ruleSurvival: "fractions up to 16 parts (+15 pts, mistake = -50 pts)",
         ruleHardcore: "fractions up to 20 parts (+20 pts, mistake = lose all pts!)",
-        close: "Close"
+        close: "Close",
+        loading: "Loading spaceship...",
+        hyperspace: "HYPERSPACE!",
+        
+        diplomaBtn: "Diploma",
+        diplomaTitle: "Claim Diploma",
+        diplomaDesc: "Enter details and generate your space certificate!",
+        studentNameInput: "Student full name:",
+        teacherNameInput: "Teacher name (Commander):",
+        printBtn: "Print Diploma",
+        receives: "Awarded to",
+        rank: "With rank",
+        scoreText: "Score",
+        dateText: "Mission date:",
+        commanderText: "Mission Commander",
+        diplomaAlert: "You need to score points to get a diploma!",
+        
+        rankKadet: "Space Cadet",
+        rankPilot: "Star Pilot",
+        rankKapitan: "Fleet Captain",
+        rankMistrz: "Galaxy Master"
       }
     };
 
@@ -320,18 +562,23 @@
 
     function App() {
       const [user, setUser] = useState(null);
-      const [isLoaded, setIsLoaded] = useState(false);
+      const [isLoaded, setIsLoaded] = useState(!auth);
 
-      const [lang, setLang] = useState('pl');
+      const [lang, setLang] = useState(() => localStorage.getItem('weso_lang') || 'pl');
       const t = translations[lang] || translations['pl'];
 
       const [tab, setTab] = useState('learn'); 
-      const [score, setScore] = useState(0); 
-      const [streak, setStreak] = useState(0);
-      const [diff, setDiff] = useState('medium'); 
+      const [score, setScore] = useState(() => parseInt(localStorage.getItem('weso_score')) || 0); 
+      const [streak, setStreak] = useState(() => parseInt(localStorage.getItem('weso_streak')) || 0);
+      const [diff, setDiff] = useState(() => localStorage.getItem('weso_diff') || 'medium'); 
       
       const [showResetConfirm, setShowResetConfirm] = useState(false);
       const [showRules, setShowRules] = useState(false);
+      
+      // Stan Dyplomu
+      const [showDiplomaModal, setShowDiplomaModal] = useState(false);
+      const [studentName, setStudentName] = useState(() => localStorage.getItem('weso_student') || '');
+      const [teacherName, setTeacherName] = useState(() => localStorage.getItem('weso_teacher') || '');
       
       const timerRef = useRef(null);
 
@@ -341,25 +588,16 @@
       const [tn, setTn] = useState(1); const [td, setTd] = useState(2); const [fb, setFb] = useState(null);
       const [colored, setColored] = useState([]);
 
+      // OBLICZANIE PRĘDKOŚCI LOTU
+      const baseSpeed = 2;
+      const speedIncreasePerStreak = 2;
+      const isWarp = streak >= 20;
+      const currentSpeed = isWarp ? 80 : baseSpeed + (streak * speedIncreasePerStreak);
+
       // --- LOGIKA ZAPISU (CHMURA LUB PAMIĘĆ NA GITHUBIE) ---
       useEffect(() => {
-        if (!auth) {
-          // Użytkownik jest na GitHub Pages - wczytujemy z pamięci przeglądarki!
-          const savedScore = getCookie('weso_score');
-          const savedStreak = getCookie('weso_streak');
-          const savedLang = getCookie('weso_lang');
-          const savedDiff = getCookie('weso_diff');
+        if (!auth) return;
 
-          if (savedScore) setScore(parseInt(savedScore));
-          if (savedStreak) setStreak(parseInt(savedStreak));
-          if (savedLang) setLang(savedLang);
-          if (savedDiff) setDiff(savedDiff);
-          
-          setIsLoaded(true);
-          return;
-        }
-
-        // Użytkownik jest w środowisku z bazą - logowanie do chmury
         const initAuth = async () => {
           try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -385,7 +623,6 @@
         if (!auth || !user) return;
         const progressRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'progress');
         const unsubscribe = onSnapshot(progressRef, (docSnap) => {
-          // Zmiana z docSnap.exists() na docSnap.exists dla kompatybilności z Firebase Compat v8/v9
           if (docSnap.exists) {
             const data = docSnap.data();
             if (data.score !== undefined) setScore(data.score);
@@ -402,16 +639,12 @@
       }, [user]);
 
       const saveProgress = async (newScore, newStreak, newLang, newDiff) => {
-        if (!auth) {
-          // Zapis na GitHub Pages do plików cookie
-          setCookie('weso_score', newScore);
-          setCookie('weso_streak', newStreak);
-          setCookie('weso_lang', newLang);
-          setCookie('weso_diff', newDiff);
-          return;
-        }
+        localStorage.setItem('weso_score', newScore);
+        localStorage.setItem('weso_streak', newStreak);
+        localStorage.setItem('weso_lang', newLang);
+        localStorage.setItem('weso_diff', newDiff);
 
-        if (!user) return;
+        if (!auth || !user) return;
         const progressRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'progress');
         try {
           await setDoc(progressRef, {
@@ -425,7 +658,6 @@
         }
       };
 
-      // --- FUNKCJE POMOCNICZE Z UAKTUALNIANIEM CHMURY ---
       const handleLangChange = (newLang) => {
         setLang(newLang);
         saveProgress(score, streak, newLang, diff);
@@ -443,7 +675,7 @@
         saveProgress(0, 0, lang, diff);
       };
 
-      // Generator ułamków zależny od trudności
+      // Generowanie ułamków
       const getFraction = () => {
         const maxDen = DIFF_SETTINGS[diff].maxDen;
         const d = Math.floor(Math.random() * (maxDen - 1)) + 2;
@@ -482,7 +714,6 @@
         if(tab==='color') genCol(); 
       }, [tab, diff, isLoaded]);
 
-      // Obsługa wygranej i przegranej
       const handleWin = (nextFn) => { 
         if (fb !== null) return;
         const pts = DIFF_SETTINGS[diff].points;
@@ -514,349 +745,478 @@
         timerRef.current = setTimeout(() => setFb(null), 1500); 
       };
 
-      // --- EKRAN ŁADOWANIA ---
+      // Logika Dyplomu
+      const handleStudentChange = (e) => { 
+        setStudentName(e.target.value); 
+        localStorage.setItem('weso_student', e.target.value); 
+      };
+      
+      const handleTeacherChange = (e) => { 
+        setTeacherName(e.target.value); 
+        localStorage.setItem('weso_teacher', e.target.value); 
+      };
+
+      const getRank = (pts) => {
+          if (pts < 100) return t.rankKadet;
+          if (pts < 300) return t.rankPilot;
+          if (pts < 600) return t.rankKapitan;
+          return t.rankMistrz;
+      };
+
+      const handlePrintDiploma = () => {
+          if (score < 5) {
+              alert(t.diplomaAlert);
+              return;
+          }
+          setShowDiplomaModal(false);
+          setTimeout(() => {
+              window.print();
+          }, 300);
+      };
+
       if (!isLoaded) {
         return (
-          <div className="min-h-screen bg-blue-50 flex flex-col items-center justify-center font-sans">
-            <Smile className="text-amber-400 mb-6 animate-bounce" size={80}/>
-            <h2 className="text-3xl font-black text-blue-900 animate-pulse">Trwa ładowanie wyników...</h2>
+          <div className="min-h-screen flex flex-col items-center justify-center font-sans text-white">
+            <Rocket className="text-indigo-400 mb-6 animate-bounce" size={80}/>
+            <h2 className="text-3xl font-black text-indigo-100 animate-pulse">{t.loading}</h2>
           </div>
         );
       }
 
       return (
-        <div className="min-h-screen bg-blue-50 p-4 flex flex-col items-center font-sans select-none relative overflow-hidden">
-          
-          {/* NAGŁÓWEK */}
-          <header className="w-full max-w-5xl bg-white p-4 rounded-3xl shadow flex flex-col md:flex-row justify-between items-center gap-4 mb-6 border-b-4 border-blue-100">
-            <div className="flex items-center gap-2 font-black text-blue-900 text-xl sm:text-2xl">
-              <Smile className="text-amber-400" size={32}/> {t.title}
-            </div>
+        <>
+          {/* Główna aplikacja, ukrywana podczas drukowania */}
+          <div className="print:hidden min-h-screen p-4 flex flex-col items-center font-sans select-none relative overflow-hidden">
+            {/* TŁO KOSMICZNE Z EFEKTEM 3D */}
+            <Starfield speed={currentSpeed} isWarp={isWarp} />
             
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {/* PRZEŁĄCZNIK JĘZYKÓW */}
-              <div className="flex gap-2 bg-slate-100 p-1.5 rounded-full border-2 border-slate-200">
-                <button onClick={() => handleLangChange('pl')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'pl' ? 'shadow-md scale-110 ring-2 ring-blue-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
-                  <img src="https://flagcdn.com/pl.svg" alt="Polski" className="w-full h-full object-cover" />
-                </button>
-                <button onClick={() => handleLangChange('is')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'is' ? 'shadow-md scale-110 ring-2 ring-blue-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
-                  <img src="https://flagcdn.com/is.svg" alt="Íslenska" className="w-full h-full object-cover" />
-                </button>
-                <button onClick={() => handleLangChange('en')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'en' ? 'shadow-md scale-110 ring-2 ring-blue-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
-                  <img src="https://flagcdn.com/gb.svg" alt="English" className="w-full h-full object-cover" />
-                </button>
-              </div>
-
-              <div className="bg-yellow-100 px-4 py-2 rounded-full font-bold text-yellow-700 flex items-center gap-2 h-11">
-                <Star className="fill-yellow-400" size={20}/> <span className="text-xl">{score}</span>
+            {/* NAGŁÓWEK */}
+            <header className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-xl p-4 rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col md:flex-row justify-between items-center gap-4 mb-6 border-b-4 border-indigo-500/50">
+              <div className="flex items-center gap-3 font-black text-xl sm:text-3xl">
+                <div className="bg-indigo-600 p-2 rounded-full text-white shadow-lg shadow-indigo-900">
+                  <Rocket size={32}/> 
+                </div>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">{t.title}</span>
               </div>
               
-              <button 
-                onClick={() => setShowRules(true)} 
-                className="bg-blue-100 px-4 py-2 rounded-full font-bold text-blue-600 hover:bg-blue-200 transition active:scale-95 flex items-center gap-2 h-11 shadow-sm"
-                title={t.rulesTitle}
-              >
-                <BookOpen size={20} />
-                <span className="hidden sm:inline">{t.rulesTitle}</span>
-              </button>
-              
-              <button 
-                onClick={() => setShowResetConfirm(true)} 
-                className="bg-slate-100 p-3 rounded-full text-slate-500 hover:bg-red-100 hover:text-red-600 transition active:scale-95 h-11 w-11 flex items-center justify-center"
-                title={t.resetTitle}
-              >
-                <RotateCcw size={20} />
-              </button>
-            </div>
-          </header>
-
-          {/* WYBÓR ZAKŁADKI */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-4">
-            <button onClick={() => setTab('learn')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='learn'?'bg-blue-500 text-white shadow-lg border-blue-500':'bg-white text-blue-500 border-blue-200 hover:bg-blue-50'}`}><Play size={18} className="inline mr-1 sm:mr-2"/>{t.explore}</button>
-            <button onClick={() => setTab('quiz')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='quiz'?'bg-green-500 text-white shadow-lg border-green-500':'bg-white text-green-500 border-green-200 hover:bg-green-50'}`}><Award size={18} className="inline mr-1 sm:mr-2"/>{t.choose}</button>
-            <button onClick={() => setTab('type')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='type'?'bg-purple-500 text-white shadow-lg border-purple-500':'bg-white text-purple-500 border-purple-200 hover:bg-purple-50'}`}><Pencil size={18} className="inline mr-1 sm:mr-2"/>{t.type}</button>
-            <button onClick={() => setTab('color')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='color'?'bg-orange-500 text-white shadow-lg border-orange-500':'bg-white text-orange-500 border-orange-200 hover:bg-orange-50'}`}><Paintbrush size={18} className="inline mr-1 sm:mr-2"/>{t.color}</button>
-          </div>
-
-          {/* WYBÓR TRUDNOŚCI */}
-          {tab !== 'learn' && (
-            <div className="relative z-30 flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 bg-white/80 p-2 rounded-full border-2 border-slate-200 shadow-sm backdrop-blur-md max-w-2xl mx-auto">
-              <button onClick={() => handleDiffChange('easy')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='easy'?'bg-green-100 border-green-500 text-green-700 shadow-sm scale-105':'bg-white border-transparent text-slate-500 hover:border-green-200 hover:text-green-600'}`}>{t.easy}</button>
-              <button onClick={() => handleDiffChange('medium')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='medium'?'bg-blue-100 border-blue-500 text-blue-700 shadow-sm scale-105':'bg-white border-transparent text-slate-500 hover:border-blue-200 hover:text-blue-600'}`}>{t.medium}</button>
-              <button onClick={() => handleDiffChange('survival')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 flex items-center gap-1 ${diff==='survival'?'bg-red-500 border-red-600 text-white shadow-md scale-105':'bg-white border-transparent text-slate-500 hover:border-red-200 hover:text-red-500'}`}><Flame size={16}/> {t.survival}</button>
-              <button onClick={() => handleDiffChange('hardcore')} className={`px-5 py-2 rounded-full text-sm font-black transition-all border-2 flex items-center gap-1 ${diff==='hardcore'?'bg-slate-900 border-black text-red-500 shadow-md scale-105':'bg-white border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-900'}`}>💀 {t.hardcore}</button>
-            </div>
-          )}
-
-          {/* GŁÓWNY KONTENER */}
-          <div className="w-full max-w-5xl relative bg-white p-6 sm:p-10 rounded-[3rem] shadow-2xl border-4 border-white min-h-[450px] flex flex-col justify-center">
-            
-            {streak >= 3 && tab !== 'learn' && (
-                <div className="absolute -top-4 -right-4 sm:-right-2 bg-orange-100 text-orange-600 px-4 py-1.5 rounded-full border-2 border-orange-300 font-black animate-pulse shadow-md flex items-center gap-1 z-20">
-                    <Flame size={18}/> {t.streak} {streak}
-                </div>
-            )}
-            
-            {/* ZAKŁADKA: ODKRYWAJ */}
-            {tab === 'learn' && (
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                {/* Lewa strona - Obrazek */}
-                <div className="flex flex-col items-center">
-                  <div className="flex gap-4 mb-8 bg-slate-50 p-2 rounded-2xl border border-slate-200">
-                     <button onClick={() => setVType('pie')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='pie'?'bg-white shadow text-blue-600 font-bold':'text-slate-400 hover:text-slate-600'}`}>{t.pizza}</button>
-                     <button onClick={() => setVType('bar')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='bar'?'bg-white shadow text-amber-700 font-bold':'text-slate-400 hover:text-slate-600'}`}>{t.chocolate}</button>
-                  </div>
-                  <div className="h-64 flex items-center justify-center w-full">
-                      {vType === 'pie' ? <PieChart total={ld} filled={ln} /> : <BarChart total={ld} filled={ln} />}
-                  </div>
-                </div>
-                
-                {/* Prawa strona - Sterowanie z Etykietami */}
-                <div className="flex flex-col items-center justify-center">
-                  <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-8 text-center">{t.build}</h2>
-                  <div className="bg-blue-50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-blue-100 shadow-inner w-full max-w-md flex flex-col gap-5">
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 flex items-center justify-between bg-white rounded-full border-2 border-slate-200 shadow-sm overflow-hidden">
-                        <button onClick={() => setLn(Math.max(ln-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-500 hover:bg-red-50 active:scale-95 transition"><ChevronDown size={28}/></button>
-                        <span className="w-16 text-center font-black text-4xl text-slate-800">{ln}</span>
-                        <button onClick={() => setLn(Math.min(ln+1, ld))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-500 hover:bg-green-50 active:scale-95 transition"><ChevronUp size={28}/></button>
-                      </div>
-                      <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.numerator}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 h-2.5 bg-slate-800 rounded-full mx-1"></div>
-                      <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.fractionLine}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 flex items-center justify-between bg-white rounded-full border-2 border-slate-200 shadow-sm overflow-hidden">
-                        <button onClick={() => {const d=Math.max(ld-1,1); setLd(d); if(ln>d) setLn(d);}} className="px-5 sm:px-6 py-3 sm:py-4 text-red-500 hover:bg-red-50 active:scale-95 transition"><ChevronDown size={28}/></button>
-                        <span className="w-16 text-center font-black text-4xl text-slate-800">{ld}</span>
-                        <button onClick={() => setLd(Math.min(ld+1, 16))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-500 hover:bg-green-50 active:scale-95 transition"><ChevronUp size={28}/></button>
-                      </div>
-                      <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.denominator}</span>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ZAKŁADKA: KOLORUJ */}
-            {tab === 'color' && colQ && (
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                {/* Lewa strona - Obrazek */}
-                <div className="flex justify-center items-center h-64 md:h-80 w-full order-2 md:order-1">
-                  {colQ.type === 'pie' 
-                    ? <PieChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} size={260}/> 
-                    : <BarChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} />
-                  }
-                </div>
-
-                {/* Prawa strona - Cel i przycisk */}
-                <div className="flex flex-col items-center justify-center order-1 md:order-2">
-                  <h2 className="text-3xl sm:text-4xl font-black mb-8 text-slate-800 text-center">{t.colorTitle}</h2>
-                  <div className="bg-orange-50 px-10 py-6 rounded-3xl border-4 border-orange-100 mb-8 flex flex-col items-center gap-4">
-                    <span className="text-xl font-bold text-slate-500 uppercase tracking-wider">{t.target}</span> 
-                    <FractionText n={colQ.n} d={colQ.d} size="text-7xl" />
-                  </div>
-                  
-                  <button 
-                      onClick={() => {
-                          const totalColored = colored.filter(Boolean).length;
-                          if (totalColored === colQ.n) handleWin(genCol);
-                          else handleLoss();
-                      }} 
-                      disabled={fb !== null}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-5 rounded-full font-black text-2xl shadow-xl shadow-orange-200 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full max-w-sm justify-center"
-                  >
-                      <Check size={32} strokeWidth={3}/> {t.done}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <div className="flex gap-2 bg-slate-800 p-1.5 rounded-full border-2 border-slate-700">
+                  <button onClick={() => handleLangChange('pl')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'pl' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+                    <img src="https://flagcdn.com/pl.svg" alt="Polski" className="w-full h-full object-cover" />
+                  </button>
+                  <button onClick={() => handleLangChange('is')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'is' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+                    <img src="https://flagcdn.com/is.svg" alt="Íslenska" className="w-full h-full object-cover" />
+                  </button>
+                  <button onClick={() => handleLangChange('en')} className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all ${lang === 'en' ? 'shadow-md scale-110 ring-2 ring-indigo-400' : 'opacity-60 hover:opacity-100 grayscale hover:grayscale-0'}`}>
+                    <img src="https://flagcdn.com/gb.svg" alt="English" className="w-full h-full object-cover" />
                   </button>
                 </div>
+
+                <div className="bg-yellow-900/50 px-4 py-2 rounded-full font-bold text-yellow-400 flex items-center gap-2 h-11 border border-yellow-700">
+                  <Star className="fill-yellow-400" size={20}/> <span className="text-xl">{score}</span>
+                </div>
+                
+                {/* NOWY PRZYCISK DYPLOMU */}
+                <button 
+                  onClick={() => setShowDiplomaModal(true)} 
+                  className="bg-fuchsia-900/50 px-4 py-2 rounded-full font-bold text-fuchsia-300 hover:bg-fuchsia-800 transition active:scale-95 flex items-center gap-2 h-11 border border-fuchsia-700 shadow-sm"
+                  title={t.diplomaBtn}
+                >
+                  <Printer size={20} />
+                  <span className="hidden sm:inline">{t.diplomaBtn}</span>
+                </button>
+
+                <button 
+                  onClick={() => setShowRules(true)} 
+                  className="bg-indigo-900/50 px-4 py-2 rounded-full font-bold text-indigo-300 hover:bg-indigo-800 transition active:scale-95 flex items-center gap-2 h-11 border border-indigo-700"
+                  title={t.rulesTitle}
+                >
+                  <BookOpen size={20} />
+                  <span className="hidden lg:inline">{t.rulesTitle}</span>
+                </button>
+                
+                <button 
+                  onClick={() => setShowResetConfirm(true)} 
+                  className="bg-slate-800 p-3 rounded-full text-slate-400 hover:bg-red-900/50 hover:text-red-400 transition active:scale-95 h-11 w-11 flex items-center justify-center border border-slate-700 hover:border-red-700"
+                  title={t.resetTitle}
+                >
+                  <RotateCcw size={20} />
+                </button>
+              </div>
+            </header>
+
+            {/* WYBÓR ZAKŁADKI */}
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-4">
+              <button onClick={() => setTab('learn')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='learn'?'bg-indigo-600 text-white shadow-lg border-indigo-500':'bg-slate-800/80 text-indigo-300 border-slate-600 hover:bg-slate-700 hover:text-indigo-100'}`}><Play size={18} className="inline mr-1 sm:mr-2"/>{t.explore}</button>
+              <button onClick={() => setTab('quiz')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='quiz'?'bg-green-600 text-white shadow-lg border-green-500':'bg-slate-800/80 text-green-300 border-slate-600 hover:bg-slate-700 hover:text-green-100'}`}><Award size={18} className="inline mr-1 sm:mr-2"/>{t.choose}</button>
+              <button onClick={() => setTab('type')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='type'?'bg-purple-600 text-white shadow-lg border-purple-500':'bg-slate-800/80 text-purple-300 border-slate-600 hover:bg-slate-700 hover:text-purple-100'}`}><Pencil size={18} className="inline mr-1 sm:mr-2"/>{t.type}</button>
+              <button onClick={() => setTab('color')} className={`px-4 sm:px-6 py-2.5 rounded-full font-bold border-2 transition-all ${tab==='color'?'bg-orange-600 text-white shadow-lg border-orange-500':'bg-slate-800/80 text-orange-300 border-slate-600 hover:bg-slate-700 hover:text-orange-100'}`}><Paintbrush size={18} className="inline mr-1 sm:mr-2"/>{t.color}</button>
+            </div>
+
+            {/* WYBÓR TRUDNOŚCI */}
+            {tab !== 'learn' && (
+              <div className="relative z-30 flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 bg-slate-900/80 p-2 rounded-full border-2 border-slate-700 shadow-sm backdrop-blur-md max-w-2xl mx-auto">
+                <button onClick={() => handleDiffChange('easy')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='easy'?'bg-green-500/20 border-green-500 text-green-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-green-800 hover:text-green-400'}`}>{t.easy}</button>
+                <button onClick={() => handleDiffChange('medium')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 ${diff==='medium'?'bg-indigo-500/20 border-indigo-500 text-indigo-400 shadow-sm scale-105':'bg-transparent border-transparent text-slate-400 hover:border-indigo-800 hover:text-indigo-400'}`}>{t.medium}</button>
+                <button onClick={() => handleDiffChange('survival')} className={`px-5 py-2 rounded-full text-sm font-bold transition-all border-2 flex items-center gap-1 ${diff==='survival'?'bg-red-500/20 border-red-500 text-red-400 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-red-900 hover:text-red-400'}`}><Flame size={16}/> {t.survival}</button>
+                <button onClick={() => handleDiffChange('hardcore')} className={`px-5 py-2 rounded-full text-sm font-black transition-all border-2 flex items-center gap-1 ${diff==='hardcore'?'bg-slate-950 border-slate-950 text-red-500 shadow-md scale-105':'bg-transparent border-transparent text-slate-400 hover:border-slate-800 hover:text-slate-100'}`}>💀 {t.hardcore}</button>
               </div>
             )}
 
-            {/* ZAKŁADKA: QUIZ */}
-            {tab === 'quiz' && quiz && (
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                {/* Lewa strona - Obrazek */}
-                <div className="h-64 md:h-80 flex items-center justify-center w-full">
-                    {quiz.type === 'pie' ? <PieChart total={quiz.d} filled={quiz.n} size={260} /> : <BarChart total={quiz.d} filled={quiz.n}/>}
-                </div>
-
-                {/* Prawa strona - Opcje */}
-                <div className="flex flex-col items-center w-full">
-                  <h2 className="text-3xl sm:text-4xl font-black mb-10 text-slate-800 text-center">{t.chooseTitle}</h2>
-                  <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-sm">
-                    {quiz.opts.map((o, i) => (
-                        <button 
-                          key={i} 
-                          onClick={() => { o.n === quiz.n && o.d === quiz.d ? handleWin(genQuiz) : handleLoss(); }} 
-                          disabled={fb !== null}
-                          className="bg-white border-4 border-slate-100 hover:border-blue-400 hover:bg-blue-50 py-8 rounded-3xl flex justify-center transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <FractionText n={o.n} d={o.d} size="text-5xl"/>
-                        </button>
-                    ))}
+            {/* GŁÓWNY KONTENER */}
+            <div className="w-full max-w-5xl relative bg-slate-900/80 backdrop-blur-xl p-6 sm:p-10 rounded-[3rem] shadow-[0_0_40px_rgba(0,0,0,0.5)] border-4 border-indigo-500/30 min-h-[450px] flex flex-col justify-center">
+              
+              {streak >= 3 && tab !== 'learn' && (
+                  <div className={`absolute -top-4 -right-4 sm:-right-2 px-4 py-1.5 rounded-full border-2 font-black animate-pulse shadow-md flex items-center gap-1 z-20 ${isWarp ? 'bg-fuchsia-900/90 text-fuchsia-300 border-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.5)] scale-110' : 'bg-orange-900/80 text-orange-400 border-orange-500'}`}>
+                      {isWarp ? <Rocket size={18} /> : <Flame size={18}/>} 
+                      {isWarp ? `${t.hyperspace} X${streak}` : `${t.streak} ${streak}`}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* ZAKŁADKA: WPISZ */}
-            {tab === 'type' && typeQ && (
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                 {/* Lewa strona - Obrazek */}
-                 <div className="h-64 md:h-80 flex items-center justify-center w-full">
-                      {typeQ.type === 'pie' ? <PieChart total={typeQ.d} filled={typeQ.n} size={260}/> : <BarChart total={typeQ.d} filled={typeQ.n}/>}
-                  </div>
-
-                  {/* Prawa strona - Sterowanie z Etykietami */}
+              )}
+              
+              {/* ZAKŁADKA: ODKRYWAJ */}
+              {tab === 'learn' && (
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                   <div className="flex flex-col items-center">
-                    <h2 className="text-3xl sm:text-4xl font-black mb-10 text-slate-800 text-center">{t.typeTitle}</h2>
-                    <div className="bg-purple-50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-purple-100 flex flex-col gap-5 mb-8 w-full max-w-md">
-                      
+                    <div className="flex gap-4 mb-8 bg-slate-800/80 p-2 rounded-2xl border border-slate-700">
+                       <button onClick={() => setVType('pie')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='pie'?'bg-slate-700 shadow text-indigo-300 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.pizza}</button>
+                       <button onClick={() => setVType('bar')} className={`px-6 py-2.5 rounded-xl transition-all ${vType==='bar'?'bg-slate-700 shadow text-amber-500 font-bold':'text-slate-400 hover:text-slate-200'}`}>{t.chocolate}</button>
+                    </div>
+                    <div className="h-64 flex items-center justify-center w-full">
+                        {vType === 'pie' ? <PieChart total={ld} filled={ln} /> : <BarChart total={ld} filled={ln} />}
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-center justify-center">
+                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-8 text-center">{t.build}</h2>
+                    <div className="bg-slate-800/50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-inner w-full max-w-md flex flex-col gap-5">
                       <div className="flex items-center gap-4">
-                        <div className="flex-1 flex items-center justify-between bg-white rounded-full border-2 border-slate-200 shadow-sm overflow-hidden">
-                            <button onClick={() => setTn(s => Math.max(s-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-500 hover:bg-red-50 transition"><ChevronDown size={28}/></button>
-                            <span className="w-16 text-center font-black text-4xl text-slate-800">{tn}</span>
-                            <button onClick={() => setTn(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-500 hover:bg-green-50 transition"><ChevronUp size={28}/></button>
+                        <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
+                          <button onClick={() => setLn(Math.max(ln-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={28}/></button>
+                          <span className="w-16 text-center font-black text-4xl text-white">{ln}</span>
+                          <button onClick={() => setLn(Math.min(ln+1, ld))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={28}/></button>
                         </div>
-                        <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.numerator}</span>
+                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
                       </div>
                       
                       <div className="flex items-center gap-4">
-                        <div className="flex-1 h-2.5 bg-slate-800 rounded-full mx-1"></div>
-                        <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.fractionLine}</span>
+                        <div className="flex-1 h-2.5 bg-slate-500 rounded-full mx-1"></div>
+                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
                       </div>
                       
                       <div className="flex items-center gap-4">
-                        <div className="flex-1 flex items-center justify-between bg-white rounded-full border-2 border-slate-200 shadow-sm overflow-hidden">
-                            <button onClick={() => setTd(s => Math.max(s-1, 1))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-500 hover:bg-red-50 transition"><ChevronDown size={28}/></button>
-                            <span className="w-16 text-center font-black text-4xl text-slate-800">{td}</span>
-                            <button onClick={() => setTd(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-500 hover:bg-green-50 transition"><ChevronUp size={28}/></button>
+                        <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
+                          <button onClick={() => {const d=Math.max(ld-1,1); setLd(d); if(ln>d) setLn(d);}} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 active:scale-95 transition"><ChevronDown size={28}/></button>
+                          <span className="w-16 text-center font-black text-4xl text-white">{ld}</span>
+                          <button onClick={() => setLd(Math.min(ld+1, 16))} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 active:scale-95 transition"><ChevronUp size={28}/></button>
                         </div>
-                        <span className="w-24 sm:w-32 text-slate-500 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-400">←</span> {t.denominator}</span>
+                        <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
+              {/* ZAKŁADKA: KOLORUJ */}
+              {tab === 'color' && colQ && (
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  <div className="flex justify-center items-center h-64 md:h-80 w-full order-2 md:order-1">
+                    {colQ.type === 'pie' 
+                      ? <PieChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} size={260}/> 
+                      : <BarChart total={colQ.d} interactive selectedSlices={colored} onSliceClick={(i)=>{if(fb!==null)return; const n=[...colored]; n[i]=!n[i]; setColored(n);}} />
+                    }
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center order-1 md:order-2">
+                    <h2 className="text-3xl sm:text-4xl font-black mb-8 text-white text-center">{t.colorTitle}</h2>
+                    <div className="bg-slate-800/80 px-10 py-6 rounded-3xl border-4 border-slate-700 mb-8 flex flex-col items-center gap-4">
+                      <span className="text-xl font-bold text-slate-400 uppercase tracking-wider">{t.target}</span> 
+                      <FractionText n={colQ.n} d={colQ.d} size="text-7xl" />
                     </div>
                     
                     <button 
-                        onClick={() => { tn === typeQ.n && td === typeQ.d ? handleWin(genType) : handleLoss(); }} 
+                        onClick={() => {
+                            const totalColored = colored.filter(Boolean).length;
+                            if (totalColored === colQ.n) handleWin(genCol);
+                            else handleLoss();
+                        }} 
                         disabled={fb !== null}
-                        className="bg-purple-500 hover:bg-purple-600 text-white px-12 py-5 rounded-full font-black text-xl sm:text-2xl shadow-xl shadow-purple-200 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 w-full max-w-sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-5 rounded-full font-black text-2xl shadow-xl shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full max-w-sm justify-center"
                     >
-                        <Check size={32} strokeWidth={3}/> {t.check}
+                        <Check size={32} strokeWidth={3}/> {t.done}
                     </button>
                   </div>
-              </div>
-            )}
-
-            {/* FEEDBACK OVERLAY (Zwycięstwo / Porażka) */}
-            {fb && (
-              <div className="absolute inset-0 bg-white/95 rounded-[3rem] flex flex-col items-center justify-center z-40 animate-in fade-in zoom-in-95 duration-200">
-                {fb === 'ok' ? (
-                    <>
-                        <CheckCircle2 size={120} className="text-green-500 mb-4 animate-bounce"/>
-                        <h3 className="text-4xl sm:text-6xl font-black text-green-600 tracking-tight">{t.awesome}</h3>
-                        <p className="font-bold text-green-700 text-2xl sm:text-3xl mt-4 bg-green-100 px-8 py-3 rounded-full">+{DIFF_SETTINGS[diff].points} {t.points}</p>
-                    </>
-                ) : (
-                    <>
-                        <XCircle size={120} className="text-red-500 mb-4"/>
-                        <h3 className="text-3xl sm:text-5xl font-black text-red-600 text-center tracking-tight">{t.tryAgain}</h3>
-                        {diff === 'survival' && (
-                            <div className="mt-8 flex flex-col items-center animate-pulse">
-                                <Flame size={56} className="text-orange-500 mb-2" />
-                                <p className="font-black text-red-700 text-2xl sm:text-3xl bg-red-100 px-8 py-4 rounded-2xl text-center border-2 border-red-200 whitespace-pre-line">
-                                    {t.survivalLoss}
-                                </p>
-                            </div>
-                        )}
-                        {diff === 'hardcore' && (
-                            <div className="mt-8 flex flex-col items-center animate-pulse">
-                                <span className="text-6xl mb-2">💀</span>
-                                <p className="font-black text-red-100 text-2xl sm:text-3xl bg-slate-900 px-8 py-4 rounded-2xl text-center border-2 border-slate-700 whitespace-pre-line">
-                                    {t.hardcoreLoss}
-                                </p>
-                            </div>
-                        )}
-                    </>
-                )}
-              </div>
-            )}
-
-            {/* POTWIERDZENIE RESETU WYNIKÓW */}
-            {showResetConfirm && (
-                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-6">
-                    <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-md w-full border-4 border-blue-100">
-                        <RotateCcw size={64} className="text-blue-500 mb-4"/>
-                        <h3 className="text-3xl font-black text-slate-800 mb-2">{t.resetTitle}</h3>
-                        <p className="text-slate-500 font-medium mb-8 text-lg">{t.resetDesc}</p>
-                        <div className="flex gap-4 w-full">
-                            <button 
-                                onClick={() => setShowResetConfirm(false)} 
-                                className="flex-1 px-6 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-xl transition active:scale-95"
-                            >
-                                {t.no}
-                            </button>
-                            <button 
-                                onClick={confirmReset} 
-                                className="flex-1 px-6 py-4 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-red-200"
-                            >
-                                {t.yes}
-                            </button>
-                        </div>
-                    </div>
                 </div>
-            )}
+              )}
 
-            {/* MODAL: ZASADY GRY (LEGENDA) */}
-            {showRules && (
-                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
-                    <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-blue-100">
-                        <BookOpen size={48} className="text-blue-500 mb-4"/>
-                        <h3 className="text-2xl sm:text-3xl font-black text-slate-800 mb-6 text-center">{t.rulesTitle}</h3>
+              {/* ZAKŁADKA: QUIZ */}
+              {tab === 'quiz' && quiz && (
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  <div className="h-64 md:h-80 flex items-center justify-center w-full">
+                      {quiz.type === 'pie' ? <PieChart total={quiz.d} filled={quiz.n} size={260} /> : <BarChart total={quiz.d} filled={quiz.n}/>}
+                  </div>
+
+                  <div className="flex flex-col items-center w-full">
+                    <h2 className="text-3xl sm:text-4xl font-black mb-10 text-white text-center">{t.chooseTitle}</h2>
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-sm">
+                      {quiz.opts.map((o, i) => (
+                          <button 
+                            key={i} 
+                            onClick={() => { o.n === quiz.n && o.d === quiz.d ? handleWin(genQuiz) : handleLoss(); }} 
+                            disabled={fb !== null}
+                            className="bg-slate-800 border-4 border-slate-600 hover:border-indigo-400 hover:bg-slate-700 py-8 rounded-3xl flex justify-center transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <FractionText n={o.n} d={o.d} size="text-5xl"/>
+                          </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ZAKŁADKA: WPISZ */}
+              {tab === 'type' && typeQ && (
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                   <div className="h-64 md:h-80 flex items-center justify-center w-full">
+                        {typeQ.type === 'pie' ? <PieChart total={typeQ.d} filled={typeQ.n} size={260}/> : <BarChart total={typeQ.d} filled={typeQ.n}/>}
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-3xl sm:text-4xl font-black mb-10 text-white text-center">{t.typeTitle}</h2>
+                      <div className="bg-slate-800/50 p-6 sm:p-8 rounded-[2.5rem] border-4 border-purple-500/20 flex flex-col gap-5 mb-8 w-full max-w-md">
                         
-                        <div className="flex flex-col gap-3 w-full mb-8">
-                            <div className="bg-green-50 p-3 sm:p-4 rounded-2xl border border-green-200">
-                                <strong className="text-green-700 block text-lg">{t.easy}</strong>
-                                <span className="text-slate-600 font-medium">{t.ruleEasy}</span>
-                            </div>
-                            <div className="bg-blue-50 p-3 sm:p-4 rounded-2xl border border-blue-200">
-                                <strong className="text-blue-700 block text-lg">{t.medium}</strong>
-                                <span className="text-slate-600 font-medium">{t.ruleMedium}</span>
-                            </div>
-                            <div className="bg-orange-50 p-3 sm:p-4 rounded-2xl border border-orange-200">
-                                <strong className="text-orange-600 block text-lg flex items-center gap-1"><Flame size={18}/> {t.survival}</strong>
-                                <span className="text-slate-600 font-medium">{t.ruleSurvival}</span>
-                            </div>
-                            <div className="bg-slate-100 p-3 sm:p-4 rounded-2xl border border-slate-300">
-                                <strong className="text-slate-800 block text-lg flex items-center gap-1">💀 {t.hardcore}</strong>
-                                <span className="text-slate-600 font-medium">{t.ruleHardcore}</span>
-                            </div>
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
+                              <button onClick={() => setTn(s => Math.max(s-1, 0))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={28}/></button>
+                              <span className="w-16 text-center font-black text-4xl text-white">{tn}</span>
+                              <button onClick={() => setTn(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={28}/></button>
+                          </div>
+                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.numerator}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 h-2.5 bg-slate-500 rounded-full mx-1"></div>
+                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.fractionLine}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 flex items-center justify-between bg-slate-700 rounded-full border-2 border-slate-600 shadow-sm overflow-hidden">
+                              <button onClick={() => setTd(s => Math.max(s-1, 1))} className="px-5 sm:px-6 py-3 sm:py-4 text-red-400 hover:bg-red-900/30 transition"><ChevronDown size={28}/></button>
+                              <span className="w-16 text-center font-black text-4xl text-white">{td}</span>
+                              <button onClick={() => setTd(s => s+1)} className="px-5 sm:px-6 py-3 sm:py-4 text-green-400 hover:bg-green-900/30 transition"><ChevronUp size={28}/></button>
+                          </div>
+                          <span className="w-24 sm:w-32 text-slate-300 font-bold text-sm sm:text-base lowercase leading-tight flex items-center gap-1"><span className="text-slate-500">←</span> {t.denominator}</span>
                         </div>
 
-                        <button 
-                            onClick={() => setShowRules(false)} 
-                            className="w-full px-6 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-blue-200"
-                        >
-                            {t.close}
-                        </button>
+                      </div>
+                      
+                      <button 
+                          onClick={() => { tn === typeQ.n && td === typeQ.d ? handleWin(genType) : handleLoss(); }} 
+                          disabled={fb !== null}
+                          className="bg-purple-600 hover:bg-purple-700 text-white px-12 py-5 rounded-full font-black text-xl sm:text-2xl shadow-xl shadow-purple-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 w-full max-w-sm"
+                      >
+                          <Check size={32} strokeWidth={3}/> {t.check}
+                      </button>
                     </div>
                 </div>
-            )}
+              )}
+
+              {/* FEEDBACK OVERLAY (Zwycięstwo / Porażka) */}
+              {fb && (
+                <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-40 animate-in fade-in zoom-in-95 duration-200 border-4 border-slate-800">
+                  {fb === 'ok' ? (
+                      <>
+                          <CheckCircle2 size={120} className="text-green-400 mb-4 animate-bounce"/>
+                          <h3 className="text-4xl sm:text-6xl font-black text-green-400 tracking-tight">{t.awesome}</h3>
+                          <p className="font-bold text-green-300 text-2xl sm:text-3xl mt-4 bg-green-900/50 px-8 py-3 rounded-full border border-green-700">+{DIFF_SETTINGS[diff].points} {t.points}</p>
+                      </>
+                  ) : (
+                      <>
+                          <XCircle size={120} className="text-red-500 mb-4"/>
+                          <h3 className="text-3xl sm:text-5xl font-black text-red-500 text-center tracking-tight">{t.tryAgain}</h3>
+                          {diff === 'survival' && (
+                              <div className="mt-8 flex flex-col items-center animate-pulse">
+                                  <Flame size={56} className="text-orange-500 mb-2" />
+                                  <p className="font-black text-red-400 text-2xl sm:text-3xl bg-red-900/50 px-8 py-4 rounded-2xl text-center border-2 border-red-800 whitespace-pre-line">
+                                      {t.survivalLoss}
+                                  </p>
+                              </div>
+                          )}
+                          {diff === 'hardcore' && (
+                              <div className="mt-8 flex flex-col items-center animate-pulse">
+                                  <span className="text-6xl mb-2">💀</span>
+                                  <p className="font-black text-red-200 text-2xl sm:text-3xl bg-slate-950 px-8 py-4 rounded-2xl text-center border-2 border-slate-700 whitespace-pre-line">
+                                      {t.hardcoreLoss}
+                                  </p>
+                              </div>
+                          )}
+                      </>
+                  )}
+                </div>
+              )}
+
+              {/* MODAL: DYPLOM */}
+              {showDiplomaModal && (
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-6">
+                      <div className="bg-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-fuchsia-500/50">
+                          <Printer size={48} className="text-fuchsia-400 mb-4"/>
+                          <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 text-center">{t.diplomaTitle}</h3>
+                          <p className="text-slate-400 font-medium mb-6 text-center">{t.diplomaDesc}</p>
+                          
+                          <div className="w-full mb-4">
+                              <label className="block text-slate-300 font-bold mb-2">{t.studentNameInput}</label>
+                              <input 
+                                type="text" 
+                                value={studentName} 
+                                onChange={handleStudentChange} 
+                                className="w-full p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
+                                placeholder="Np. Jan Kowalski" 
+                              />
+                          </div>
+                          
+                          <div className="w-full mb-8">
+                              <label className="block text-slate-300 font-bold mb-2">{t.teacherNameInput}</label>
+                              <input 
+                                type="text" 
+                                value={teacherName} 
+                                onChange={handleTeacherChange} 
+                                className="w-full p-3 rounded-xl bg-slate-900 text-white border border-slate-600 focus:border-fuchsia-400 focus:outline-none" 
+                                placeholder="Np. Anna Nowak" 
+                              />
+                          </div>
+
+                          <div className="flex gap-4 w-full">
+                              <button onClick={() => setShowDiplomaModal(false)} className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold transition active:scale-95">{t.close}</button>
+                              <button onClick={handlePrintDiploma} className="flex-1 px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-2xl font-bold transition active:scale-95 shadow-lg shadow-fuchsia-900/50 flex items-center justify-center gap-2">
+                                <Printer size={20} /> {t.printBtn}
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              )}
+
+              {/* POTWIERDZENIE RESETU WYNIKÓW */}
+              {showResetConfirm && (
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-6">
+                      <div className="bg-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-md w-full border-4 border-slate-700">
+                          <RotateCcw size={64} className="text-indigo-400 mb-4"/>
+                          <h3 className="text-3xl font-black text-white mb-2">{t.resetTitle}</h3>
+                          <p className="text-slate-300 font-medium mb-8 text-lg">{t.resetDesc}</p>
+                          <div className="flex gap-4 w-full">
+                              <button 
+                                  onClick={() => setShowResetConfirm(false)} 
+                                  className="flex-1 px-6 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xl transition active:scale-95"
+                              >
+                                  {t.no}
+                              </button>
+                              <button 
+                                  onClick={confirmReset} 
+                                  className="flex-1 px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-red-900/50"
+                              >
+                                  {t.yes}
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              )}
+
+              {/* MODAL: ZASADY GRY (LEGENDA) */}
+              {showRules && (
+                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-[3rem] flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 p-4 sm:p-6">
+                      <div className="bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-md w-full border-4 border-slate-700">
+                          <BookOpen size={48} className="text-indigo-400 mb-4"/>
+                          <h3 className="text-2xl sm:text-3xl font-black text-white mb-6 text-center">{t.rulesTitle}</h3>
+                          
+                          <div className="flex flex-col gap-3 w-full mb-8">
+                              <div className="bg-green-900/30 p-3 sm:p-4 rounded-2xl border border-green-500/30">
+                                  <strong className="text-green-400 block text-lg">{t.easy}</strong>
+                                  <span className="text-slate-300 font-medium">{t.ruleEasy}</span>
+                              </div>
+                              <div className="bg-indigo-900/30 p-3 sm:p-4 rounded-2xl border border-indigo-500/30">
+                                  <strong className="text-indigo-400 block text-lg">{t.medium}</strong>
+                                  <span className="text-slate-300 font-medium">{t.ruleMedium}</span>
+                              </div>
+                              <div className="bg-orange-900/30 p-3 sm:p-4 rounded-2xl border border-orange-500/30">
+                                  <strong className="text-orange-400 block text-lg flex items-center gap-1"><Flame size={18}/> {t.survival}</strong>
+                                  <span className="text-slate-300 font-medium">{t.ruleSurvival}</span>
+                              </div>
+                              <div className="bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-700">
+                                  <strong className="text-white block text-lg flex items-center gap-1">💀 {t.hardcore}</strong>
+                                  <span className="text-slate-400 font-medium">{t.ruleHardcore}</span>
+                              </div>
+                          </div>
+
+                          <button 
+                              onClick={() => setShowRules(false)} 
+                              className="w-full px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-xl transition active:scale-95 shadow-lg shadow-indigo-900/50"
+                          >
+                              {t.close}
+                          </button>
+                      </div>
+                  </div>
+              )}
+            </div>
+
+            <footer className="mt-8 mb-4 text-center w-full z-10 relative">
+              <p className="text-indigo-300 font-medium text-sm drop-shadow-md">
+                {t.footer} <span className="text-white font-bold uppercase tracking-wider">Mirosław Miras</span>
+              </p>
+            </footer>
           </div>
 
-          <footer className="mt-8 mb-4 text-center w-full">
-            <p className="text-slate-400 font-medium text-sm">
-              {t.footer} <span className="text-slate-500 font-bold uppercase tracking-wider">Mirosław Miras</span>
-            </p>
-          </footer>
+          {/* ================= OFICJALNY DYPLOM DO DRUKU ================= */}
+          <div id="diploma-print-area" className="hidden print:flex">
+              <img className="print-bg-img" src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&w=1200&q=80" alt="Tło" />
+              <div className="print-bg-overlay"></div>
 
-        </div>
+              <div className="print-diploma-border">
+                  <div style={{ textAlign: 'center', marginTop: '2rem', width: '100%', position: 'relative', zIndex: 10 }}>
+                      <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '3.5rem', fontWeight: 900, color: '#d4af37', margin: '0 0 0.5rem 0', letterSpacing: '0.15em' }}>CERTYFIKAT</h1>
+                      <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '1.5rem', fontWeight: 700, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '0.3em', margin: '0 auto 1.5rem auto', borderBottom: '1px solid #d4af37', paddingBottom: '1rem', width: '80%' }}>
+                          {t.title}
+                      </h2>
+                      
+                      <p style={{ fontFamily: "'Montserrat', sans-serif", color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '1rem', margin: '1rem 0' }}>
+                          {t.receives}:
+                      </p>
+                      <div style={{ fontFamily: "'Cinzel', serif", fontSize: '3.5rem', fontWeight: 900, color: '#f8fafc', margin: '0.5rem 0 1rem 0', borderBottom: '2px solid #d4af37', display: 'inline-block', padding: '0 2rem', minWidth: '400px' }}>
+                          {studentName || "........................................"}
+                      </div>
+
+                      <p style={{ fontFamily: "'Montserrat', sans-serif", color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '1rem', margin: '1rem 0' }}>
+                          {t.rank}:
+                      </p>
+                      <div style={{ fontFamily: "'Cinzel', serif", fontSize: '3.5rem', color: '#f8fafc', margin: '0.5rem 0 1.5rem 0', letterSpacing: '0.1em' }}>
+                          {getRank(score)}
+                      </div>
+                      
+                      <p style={{ fontFamily: "'Montserrat', sans-serif", color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '1rem', margin: '1rem 0' }}>
+                          {t.scoreText}:
+                      </p>
+                      <div style={{ fontFamily: "'Cinzel', serif", fontSize: '4rem', color: '#d4af37', margin: '0.5rem 0' }}>
+                          {score}
+                      </div>
+                  </div>
+
+                  <div style={{ width: '100%', position: 'absolute', bottom: '4rem', padding: '0 4rem', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <div style={{ textAlign: 'left', width: '30%' }}>
+                          <p style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, color: '#cbd5e1', fontSize: '0.9rem', margin: 0 }}>
+                              {t.dateText} <span style={{ color: '#f8fafc' }}>{new Date().toLocaleDateString()}</span>
+                          </p>
+                      </div>
+                      
+                      <div style={{ textAlign: 'center', width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <div style={{ width: '200px', height: '1px', backgroundColor: '#d4af37', marginBottom: '0.5rem' }}></div>
+                          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '0.75rem', color: '#d4af37', margin: 0, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
+                              {t.commanderText}:
+                          </p>
+                          <p style={{ fontFamily: "'Cinzel', serif", fontSize: '1.1rem', color: '#f8fafc', fontWeight: 700, margin: '0.5rem 0 0 0' }}>
+                              {teacherName || "........................................"}
+                          </p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </>
       );
     }
 
