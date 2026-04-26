@@ -40,29 +40,6 @@
                   radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
     }
 
-    /* Lecące gwiazdy - warstwa wolna (dalsza) */
-    .stars-slow {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -2;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ccircle cx='50' cy='50' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='150' cy='120' r='2' fill='white' opacity='0.8'/%3E%3Ccircle cx='250' cy='40' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='320' cy='200' r='2.5' fill='white' opacity='0.9'/%3E%3Ccircle cx='80' cy='300' r='1.5' fill='white' opacity='0.5'/%3E%3Ccircle cx='200' cy='350' r='2' fill='white' opacity='1'/%3E%3Ccircle cx='350' cy='380' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='10' cy='220' r='2' fill='white' opacity='0.9'/%3E%3Ccircle cx='280' cy='180' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='180' cy='25' r='2' fill='white' opacity='0.8'/%3E%3C/svg%3E");
-      animation: starMove 40s linear infinite;
-    }
-
-    /* Lecące gwiazdy - warstwa szybka (bliższa) */
-    .stars-fast {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Ccircle cx='40' cy='80' r='2' fill='white' opacity='0.7'/%3E%3Ccircle cx='200' cy='150' r='2.5' fill='white' opacity='1'/%3E%3Ccircle cx='280' cy='50' r='2' fill='white' opacity='0.9'/%3E%3Ccircle cx='120' cy='250' r='2' fill='white' opacity='0.8'/%3E%3Ccircle cx='50' cy='280' r='3' fill='white' opacity='1'/%3E%3Ccircle cx='220' cy='10' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='150' cy='200' r='2' fill='white' opacity='0.9'/%3E%3C/svg%3E");
-      animation: starMove 20s linear infinite;
-    }
-
-    @keyframes starMove {
-      from { background-position: 0 0; }
-      to { background-position: 0 1200px; }
-    }
-
     /* ======================================================= */
     /* WYMUSZONY WYGLĄD DYPLOMU PIONOWEGO TYLKO DO DRUKU       */
     /* ======================================================= */
@@ -108,8 +85,6 @@
 </head>
 <body class="text-slate-100">
   <div class="space-bg print:hidden"></div>
-  <div class="stars-slow print:hidden"></div>
-  <div class="stars-fast print:hidden"></div>
   <div id="root"></div>
 
   <script type="text/babel">
@@ -316,16 +291,16 @@
         if (total === 1) {
           slices.push(
             <circle key={i} cx={center} cy={center} r={radius} 
-                    fill={isFilled ? "#FCD34D" : "#FFFBEB"} 
-                    stroke="#D97706" strokeWidth="4"
+                    fill={isFilled ? "#FCD34D" : "rgba(15, 23, 42, 0.6)"} 
+                    stroke="#B45309" strokeWidth="4"
                     onClick={() => interactive && onSliceClick(i)}
                     className={interactiveClass} />
           );
         } else {
           slices.push(
             <path key={i} d={d} 
-                  fill={isFilled ? "#FCD34D" : "#FFFBEB"} 
-                  stroke="#D97706" strokeWidth="3" 
+                  fill={isFilled ? "#FCD34D" : "rgba(15, 23, 42, 0.6)"} 
+                  stroke="#B45309" strokeWidth="3" 
                   onClick={() => interactive && onSliceClick(i)}
                   className={interactiveClass} />
           );
@@ -334,7 +309,7 @@
 
       return (
         <svg width={size} height={size} className="drop-shadow-lg max-w-full h-auto">
-          <circle cx={center} cy={center} r={radius} fill="#FFFBEB" stroke="#D97706" strokeWidth="4" />
+          <circle cx={center} cy={center} r={radius} fill="rgba(15, 23, 42, 0.6)" stroke="#B45309" strokeWidth="4" />
           {slices}
         </svg>
       );
@@ -343,16 +318,16 @@
     // --- Komponent Wizualizatora Prostokątnego (Czekolada) ---
     const BarChart = ({ total, filled, interactive = false, selectedSlices = [], onSliceClick = () => {} }) => {
       return (
-        <div className="flex w-full h-32 md:h-40 max-w-md border-4 border-amber-900 rounded-2xl overflow-hidden drop-shadow-md bg-amber-950">
+        <div className="flex w-full h-32 md:h-40 max-w-md border-4 border-amber-950 rounded-2xl overflow-hidden drop-shadow-lg bg-black/40">
           {Array.from({ length: total }).map((_, i) => {
             const isFilled = interactive ? selectedSlices[i] : i < filled;
             return (
               <div 
                 key={i} 
                 onClick={() => interactive && onSliceClick(i)}
-                className={`flex-1 border-r-4 last:border-r-0 border-amber-900 
-                  ${interactive ? 'cursor-pointer hover:bg-amber-800 transition-colors' : 'transition-colors duration-500'}
-                  ${isFilled ? 'bg-amber-600' : 'bg-amber-900'}`} 
+                className={`flex-1 border-r-4 last:border-r-0 border-amber-950 
+                  ${interactive ? 'cursor-pointer hover:bg-amber-700/80 transition-colors' : 'transition-colors duration-500'}
+                  ${isFilled ? 'bg-amber-600' : 'bg-transparent'}`} 
               />
             );
           })}
